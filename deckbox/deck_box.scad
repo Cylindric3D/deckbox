@@ -13,15 +13,15 @@ circleRes = 10;
 printingTolerance = 0.2;
 
 // Complete render with parts moved into position (possibly with parts exploded as per "explode" value above
-assembledLayout();
+//assembledLayout();
 
 // comment the above and uncomment each of these in turn to export STL's
-//printLayout();
+//printLayout1();
 //printLayout2();
-//printLayout3();
+//printLayout3(); // toothed bars
 //printLayout4();
 //printLayout5();
-//printLayout6();
+printLayout6();
 //printLayout7();
 //printLayout8();
 
@@ -43,7 +43,7 @@ assembledLayout();
 // magic (or other) card size the below includes sleeves. ... 
 //    eg. change cardy value to be able to hold more cards
 cardx = 70;
-cardy= 30;
+cardy = 30;
 cardz = 100;
 
 // There needs to be a little clearance above the cards otherwise the mechanism gets caught when it rotates
@@ -75,8 +75,11 @@ oz = cardz + cardclearance + wall*2;
 ch = oz-rad; // height of the centre point of the axes that the lid rotates off
 gearHeight = wall+ mechanism-printingTolerance;
 
-include <parametric_involute_gear_v5.0.scad>
-include <gear_rack.scad>
+j=0.1;
+
+
+use <parametric_involute_gear_v5.0.scad>
+use <gear_rack.scad>
 
 ///////////////////////////////////////////////////////////////////
 // Everything is built in quarters
@@ -85,13 +88,13 @@ include <gear_rack.scad>
 module notches()
 {
 	// Cut notch for side
-	translate ([ox-wall,notchHeight/2-printingTolerance,0]) 	
-		cube(size = [50,notchHeight+printingTolerance*2,wall]);
-	translate ([ox-wall,notchHeight*2-printingTolerance,0]) 	
-		cube(size = [50,notchHeight+printingTolerance*2,wall]);
+	translate ([ox-wall,notchHeight/2-printingTolerance,-j]) 	
+		cube(size = [50,notchHeight+printingTolerance*2,wall+j*2]);
+	translate ([ox-wall,notchHeight*2-printingTolerance,-j]) 	
+		cube(size = [50,notchHeight+printingTolerance*2,wall+j*2]);
 	// Cut notch for bottom
-	translate ([ox-notchHeight*3/2-printingTolerance,0,0]) 	
-		cube(size = [notchHeight+printingTolerance*2,wall+printingTolerance,wall]);
+	translate ([ox-notchHeight*3/2-printingTolerance,-j,-j]) 	
+		cube(size = [notchHeight+printingTolerance*2,wall+printingTolerance+j,wall+j*2]);
 }
 
 module base_quarter()
@@ -102,17 +105,17 @@ module base_quarter()
 		cube([ox-wall-printingTolerance*2,oy,wall]);
 
 		// edge notches
-		translate ([0,-printingTolerance,0])
-			cube([ox-notchHeight*3/2+printingTolerance,wall+printingTolerance,wall]);
-		translate ([ox-notchHeight/2+printingTolerance*2,-printingTolerance,0])
+		translate ([-j,-printingTolerance,-j])
+			cube([ox-notchHeight*3/2+printingTolerance+j,wall+printingTolerance,wall+j*2]);
+		translate ([ox-notchHeight/2+printingTolerance*2,-printingTolerance,-j])
 			cube([notchHeight,wall+printingTolerance*2,100]);
 
 		// notches for the inner supports
 		translate([0,wall+mechanism,0])
 		{
-			translate ([slidewidth+printingTolerance,-printingTolerance,0])
-				cube([ox-notchHeight*3/2-slidewidth,wall+printingTolerance,wall]);
-			translate ([ox-notchHeight/2+printingTolerance*2,-printingTolerance,0])
+			translate ([slidewidth+printingTolerance,-printingTolerance,-j])
+				cube([ox-notchHeight*3/2-slidewidth,wall+printingTolerance,wall+j*2]);
+			translate ([ox-notchHeight/2+printingTolerance*2,-printingTolerance,-j])
 				cube([notchHeight,wall+printingTolerance*2,100]);
 		}
 
@@ -123,11 +126,9 @@ module base_quarter()
 
 module sideTab()
 {
-	cube([wall,notchHeight/2,wall]);
-	translate ([0,notchHeight*3/2,0]) 	
-		cube([wall,notchHeight/2,wall]);
-	translate ([0,notchHeight*3,0]) 	
-		cube([wall,100,wall]);
+	translate([0, -j, -j]) cube([wall+j,notchHeight/2+j,wall+j*2]);
+	translate([0,notchHeight*3/2,-j]) cube([wall+j,notchHeight/2,wall+j*2]);
+	translate([0,notchHeight*3-j,-j]) cube([wall+j,100,wall+j*2]);
 }
 
 
@@ -136,11 +137,12 @@ module face_half()
 	difference()
 	{
 		cube(size = [ox,oz,wall]);
-		translate ([rad,ch,0]) 	
+		translate ([rad,ch,-j]) 	
 			cylinder(h=100,r=rad+printingTolerance,$fn=circleRes);
-		translate ([0,ch-chx,0]) 	
+		translate ([-j,ch-chx,-j]) 	
 			cube(size = [500,500,500]);
 	      	// Infinty symbol - decorations
+		/*
 		translate ([(ch-rad)/3,(ch-rad)/2,wall-etchDepth]) 	
 		     {
 	
@@ -159,7 +161,7 @@ module face_half()
 			}
 			}
 		     }
-	
+		*/
 		notches();
 	}
 
@@ -207,7 +209,7 @@ module mechanism_half()
 		}
 	}
 	notches();
-	cube(size=[slidewidth+printingTolerance,ch-chx,wall]);
+	translate([-j,-j,-j]) cube(size=[slidewidth+printingTolerance+j,ch-chx+j,wall+j*2]);
 	}
 }
 
@@ -222,7 +224,7 @@ module hinge(r,hole,length)
 				cylinder(h=length,r=r,$fn=circleRes);
 		}
 		translate([r,r,0])
-			cylinder(h=length,r=hole,$fn=circleRes);
+			cylinder(h=length+j,r=hole,$fn=circleRes);
 	}
 }
 
@@ -267,7 +269,7 @@ module top_half()
 			translate([pivotrad+printingTolerance*2,-pivotrad,0])
 				cube([ox-rad-(pivotrad+printingTolerance*2),pivotrad*2,gearHeight]);
 			}
-			cylinder(h=gearHeight,r=pivotrad+printingTolerance,$fn=circleRes);
+			cylinder(h=gearHeight+j,r=pivotrad+printingTolerance,$fn=circleRes);
 			translate([ox-rad,-1000,0])
 				cube([1000,3000,1000]);
 		}
@@ -278,7 +280,7 @@ module top_half()
 		translate ([0,rad*2+cardclearance+wall-wall*2,0]) 
 			cube(size = [notchHeight,wall*2,oy]);
 		translate ([wall,rad*2+cardclearance+wall-wall-keyThickness/2,wall]) 
-			cube(size = [notchHeight-wall*2,keyThickness,oy-wall]);
+			cube(size = [notchHeight-wall*2,keyThickness,oy-wall+j]);
 
            }
           //  key system to hold the two parts of the top together
@@ -292,8 +294,8 @@ module lid_half()
 {
 union()
 {
-	translate([0,hingeRad*2,0])
-	  cube([oy - wall - printingTolerance*2,ox-notchHeight-wall-2*hingeRad,wall]);
+	translate([0,hingeRad*2-j,0])
+	  cube([oy - wall - printingTolerance*2,ox-notchHeight-wall-2*hingeRad+j*2,wall]);
 	translate ([0,hingeRad*2,0]) 
 		scale([1,-1,1])
 		rotate(a=[90,0,90])
@@ -423,7 +425,7 @@ module top_side()
 /////////////////////////////////////////////////////////////////////////
 // Layouts
 
-module printLayout()
+module printLayout1()
 {
 	translate([ox+printingGap/2,-rad,0])
 		frontAndBack();
