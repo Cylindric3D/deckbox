@@ -12,19 +12,47 @@ circleRes = 10;
 // and your printer is probably better tuned than mine, so maybe it doesn't have to be this high for you.
 printingTolerance = 0.2;
 
-// Complete render with parts moved into position (possibly with parts exploded as per "explode" value above
-//assembledLayout();
 
-// comment the above and uncomment each of these in turn to export STL's
-//printLayout1();
-//printLayout2();
-//printLayout3(); // toothed bars
-//printLayout4();
-//printLayout5();
-printLayout6();
-//printLayout7();
-//printLayout8();
+part=0; // [0|1|2|3|4|5|6|7|8]
 
+if(part==0)
+{
+	// Complete render with parts moved into position (possibly with parts exploded as per "explode" value above
+	assembledLayout();
+}
+
+if(part==1)
+{
+	printLayout1(); // two big panels
+}
+if(part==2)
+{
+	printLayout2(); // two big panels with hinges
+}
+if(part==3)
+{
+	printLayout3(); // two toothed bars
+}
+if(part==4)
+{
+	printLayout4(); // four big geared parts
+}
+if(part==5)
+{
+	printLayout5(); // two panels
+}
+if(part==6)
+{
+	printLayout6(); // 4 hinged bits
+}
+if(part==7)
+{
+	printLayout7(); // single plate
+}
+if(part==8)
+{
+	printLayout8(); // single plate
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -220,11 +248,9 @@ module hinge(r,hole,length)
 		union()
 		{
 			cube([r,r,length]);
-			translate([r,r,0])
-				cylinder(h=length,r=r,$fn=circleRes);
+			translate([r,r,0]) cylinder(h=length,r=r,$fn=circleRes);
 		}
-		translate([r,r,0])
-			cylinder(h=length+j,r=hole,$fn=circleRes);
+		translate([r,r,-j]) cylinder(h=length+j*2,r=hole,$fn=circleRes);
 	}
 }
 
@@ -294,12 +320,13 @@ module lid_half()
 {
 union()
 {
-	translate([0,hingeRad*2-j,0])
-	  cube([oy - wall - printingTolerance*2,ox-notchHeight-wall-2*hingeRad+j*2,wall]);
-	translate ([0,hingeRad*2,0]) 
+	translate([-1,hingeRad*2-j,0])
+		cube([oy - wall - printingTolerance*2,ox-notchHeight-wall-2*hingeRad+j*2,wall]);
+	
+	translate ([-1,hingeRad*2,0]) 
 		scale([1,-1,1])
 		rotate(a=[90,0,90])
-		hinge(hingeRad,hingeHole,cardy/6-printingTolerance);
+		hinge(hingeRad,hingeHole,1+cardy/6-printingTolerance);
 
 	translate ([cardy/6,ox-notchHeight-wall,0]) 
 		scale([-1,-1,1])
@@ -312,12 +339,13 @@ module top_side_half()
 {
 union()
 {
-	translate([0,hingeRad*2,0])
-	  cube([cardy/2-printingTolerance,rad*2-4*hingeRad+cardclearance+wall,wall]);
+	translate([0,hingeRad*2-j,0])
+		cube([cardy/2-printingTolerance,rad*2-4*hingeRad+cardclearance+wall+j,wall]);
+
 	translate ([0,hingeRad*2,0]) 
 		scale([1,-1,1])
 		rotate(a=[90,0,90])
-		hinge(hingeRad,hingeHole,cardy/6-printingTolerance);
+		hinge(hingeRad, hingeHole, cardy/6-printingTolerance);
 
 	translate ([cardy/6,rad*2-2*hingeRad+cardclearance+wall,0]) 
 		scale([-1,-1,1])
@@ -369,15 +397,17 @@ module mechanism()
 
 module side()
 {
-  union()
-{
-	side_half();
-	scale([-1,1,1])
+	color("red")
+	union()
+	{
 		side_half();
-}
-	translate([cardy/6+printingTolerance,ch-rad,0])
+		
+		scale([-1,1,1]) side_half();
+		
+		translate([cardy/6+printingTolerance,ch-rad,0])
 		rotate(a=[0,-90,0])
-			hinge(hingeRad,hingeHole,cardy/3-printingTolerance*2);
+		hinge(hingeRad,hingeHole,cardy/3-printingTolerance*2);
+	}
 }
 
 module rack_lift()
@@ -494,15 +524,10 @@ module printLayout5()
 
 module printLayout6()
 {
-
-	translate([ox/2+10+printingGap/2,-33,0])
-				lid();
-	translate([-ox/2-10-printingGap/2,-33,0])
-				lid();
-	translate([-ox/2-printingGap/2,0,0])
-				top_side();
-	translate([ox/2+printingGap/2,0,0])
-				top_side();
+	translate([ox/2+10+printingGap/2,-33,0]) lid();
+	translate([-ox/2-10-printingGap/2,-33,0]) lid();
+	translate([-ox/2-printingGap/2,0,0]) top_side();
+	translate([ox/2+printingGap/2,0,0]) top_side();
 }
 
 module printLayout7()
@@ -527,48 +552,58 @@ module assembledLayout()
 		frontAndBack();
 
       // mechanisms
+	  color("RosyBrown")
 	translate([0,-cardy/2,0])
 	rotate(a=[90,0,0])
 		mechanism();
 
+	  color("RosyBrown")
 	translate([0,cardy/2,0])
 	rotate(a=[90,0,180])
 		mechanism();
 
       // sides (exploded)
+	color("blue")
 	translate([ox - wall + explode,0,0])
 	rotate(a=[90,0,90])
 		side();
 
+	color("blue")
 	translate([-ox + wall -explode,0,0])
 	rotate(a=[90,0,-90])
 		side();
 
       // rack  / pinion card lift (slides)
       // mechanisms
+	color("SeaGreen")
 	translate([0,-cardy/2-wall-mechanism-explode/2,0])
 	rotate(a=[90,0,180])
 		rack_lift();
 
+	color("SeaGreen")
 	translate([0,cardy/2+wall+mechanism+explode/2,0])
 	rotate(a=[90,0,0])
 		rack_lift();
 
      // top
+	 color("DarkMagenta")
 	translate([0+explode,-oy-explode,ch-rad+explode])
 	rotate(a=[90,0,180])
 		scale([-1,1,1])
 			top_half();
 
+	 color("DarkMagenta")
 	translate([0-explode,-oy-explode,ch-rad+explode])
 	rotate(a=[90,0,180])
 			top_half();
 
+	 color("DarkMagenta")
 	translate([0-explode,oy+explode,ch-rad+explode])
 	rotate(a=[90,0,0])
 		scale([-1,1,1])
 			top_half();
 
+	 color("DarkMagenta")
 	translate([0+explode,oy+explode,ch-rad+explode])
 	rotate(a=[90,0,0])
 			top_half();
