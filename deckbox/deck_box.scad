@@ -15,7 +15,7 @@ printingTolerance = 0.2;
 
 manalogo = "none"; // [none, blue, green]
 
-part=0; // [0|1|2|3|4|5|6|7|8]
+part=2; // [0|1|2|3|4|5|6|7|8]
 
 if(part==0)
 {
@@ -73,18 +73,18 @@ if(part==8)
 // magic (or other) card size the below includes sleeves. ... 
 //    eg. change cardy value to be able to hold more cards
 cardx = 70;
-cardy = 30;
+cardy = 75; // 60 sleeved = 40mm
 cardz = 100;
 
 // There needs to be a little clearance above the cards otherwise the mechanism gets caught when it rotates
-cardclearance =6;
+cardclearance = 6;
 
 // wall thickness
 wall = 3;
 
-hingeRad=3;
-hingeHole=1;
-etchDepth=0.4;
+hingeRad = 3;
+hingeHole = 1;
+etchDepth = 0.4;
 printingGap = 3;
 
 keyThickness = 2.4;
@@ -105,7 +105,8 @@ oz = cardz + cardclearance + wall*2;
 ch = oz-rad; // height of the centre point of the axes that the lid rotates off
 gearHeight = wall+ mechanism-printingTolerance;
 
-j=0.5;
+// Jitter is used to prevent coincident-surface problems with CSG. Should be set to something small.
+j=0.1;
 
 
 use <parametric_involute_gear_v5.0.scad>
@@ -156,9 +157,12 @@ module base_quarter()
 
 module sideTab()
 {
-	translate([0, -j, -j]) cube([wall+j, notchHeight/2+j, wall+j*2]);
-	translate([0, notchHeight*3/2, -j]) cube([wall+j, notchHeight/2, wall+j*2]);
-	translate([0, notchHeight*3-j, -j]) cube([wall+j, 100, wall+j*2]);
+	union()
+	{
+		translate([0, -j, -j]) cube([wall+j, notchHeight/2+j, wall+j*2]);
+		translate([0, notchHeight*3/2, -j]) cube([wall+j, notchHeight/2, wall+j*2]);
+		translate([0, notchHeight*3-j, -j]) cube([wall+j, 100, wall+j*2]);
+	}
 }
 
 
@@ -202,12 +206,15 @@ module rack_lift_half()
 //CSG Checked
 module rack_lift_platform_half()
 {
-	cube([slidewidth-wall-printingTolerance, cardy+ (wall+mechanism-printingTolerance)*2, wall-printingTolerance*2]);
-
-	translate([0, wall+mechanism+printingTolerance*3, 0])
+	union()
 	{
-		cube([cardx/2-printingTolerance*4, cardy-printingTolerance*6, wall-printingTolerance*2]);
-		cube([slidewidth-wall-printingTolerance, cardy-printingTolerance*6, 2*wall-printingTolerance*2]);
+		cube([slidewidth-wall-printingTolerance, cardy+(wall+mechanism-printingTolerance)*2, wall-printingTolerance*2]);
+
+		translate([0, wall+mechanism+printingTolerance*3, 0])
+		{
+			cube([cardx/2-printingTolerance*4, cardy-printingTolerance*6, wall-printingTolerance*2]);
+			cube([slidewidth-wall-printingTolerance, cardy-printingTolerance*6, 2*wall-printingTolerance*2]);
+		}
 	}
 }
 
@@ -353,7 +360,18 @@ module top_side_half()
 //CSG Checked
 module top_key()
 {
-	cube(size = [notchHeight-wall*2-printingTolerance, oy-wall, keyThickness-printingTolerance]);
+	width=notchHeight-wall*2-printingTolerance;
+	thickness=keyThickness-printingTolerance;
+	length=min(oy-wall, 20);
+	
+	translate([0, -length/2, 0])
+	hull()
+	{
+		cube([width*0.9, j, thickness*0.9], center=true);
+		translate([0, length*0.3, 0]) cube([width, j, thickness], center=true);
+		translate([0, length*0.6, 0]) cube([width, j, thickness], center=true);
+		translate([0, length, 0]) cube([width*0.9, j, thickness*0.9], center=true);
+	}
 }
 
 
@@ -363,18 +381,20 @@ module top_key()
 
 module base_half()
 {
-	base_quarter();
-	scale([-1, 1, 1])
+	union()
+	{
 		base_quarter();
+		translate([j, 0, 0]) scale([-1, 1, 1]) base_quarter();
+	}
 }
 
 module base()
 {
-	base_half();
-	translate([0, oy*2, 0])
-		scale([1, -1, 1])
-			base_half();
-
+	union()
+	{
+		base_half();
+		translate([0, oy*2-j, 0])	scale([1, -1, 1]) base_half();
+	}
 }
 
 module manaLogoBlue()
@@ -426,9 +446,11 @@ module frontAndBack()
 
 module mechanism()
 {
-	mechanism_half();
-	scale([-1, 1, 1])
+	union()
+	{
 		mechanism_half();
+		translate([j, 0, 0]) scale([-1, 1, 1]) mechanism_half();
+	}
 }
 
 module side()
@@ -436,9 +458,9 @@ module side()
 	color("red")
 	union()
 	{
-		side_half();
+		translate([-j, 0, 0]) side_half();
 		
-		scale([-1, 1, 1]) side_half();
+		translate([j, 0, 0]) scale([-1, 1, 1]) side_half();
 		
 		translate([cardy/6+printingTolerance, ch-rad, 0])
 		rotate(a=[0, -90, 0])
@@ -448,28 +470,27 @@ module side()
 
 module rack_lift()
 {
-	rack_lift_half();
-	scale([-1, 1, 1])
+	union()
+	{
 		rack_lift_half();
+		translate([j, 0, 0]) scale([-1, 1, 1]) rack_lift_half();
+	}
 }
 
 module rack_lift_platform()
 {
-	rack_lift_platform_half();
-	scale([-1, 1, 1])
-	rack_lift_platform_half();
+	union()
+	{
+		rack_lift_platform_half();
+		translate([j, 0, 0]) scale([-1, 1, 1]) rack_lift_platform_half();
+	}
 }
 
 
 module topLayout2()
 {
-
-	translate([printingGap/2, printingGap/2, 0])
-			top_half();
-
-	translate([-printingGap/2, printingGap/2, 0])
-			scale([-1, 1, 1])
-				top_half();
+	translate([printingGap/2, printingGap/2, 0]) top_half();
+	translate([-printingGap/2, printingGap/2, 0]) scale([-1, 1, 1])	top_half();
 }
 
 module lid()
@@ -652,11 +673,11 @@ module assembledLayout()
 	
 	// connectors
 	translate([notchHeight+explode-6, 0, oz+wall+2+explode])
-	translate([-(notchHeight-wall*2-printingTolerance)/2, -(oy-wall)*0.5, 0])
+	translate([-(notchHeight-wall*2-printingTolerance)/2, 0, 0])
 	top_key();
 
 	translate([-notchHeight-explode+6, 0, oz+wall+2+explode])
-	translate([-(notchHeight-wall*2-printingTolerance)/2, -(oy-wall)*0.5, 0])
+	translate([-(notchHeight-wall*2-printingTolerance)/2, 0, 0])
 	top_key();
 
 	translate([-notchHeight-explode, 0, oz+cardclearance+wall+explode])
