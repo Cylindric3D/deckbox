@@ -6,7 +6,7 @@
 /* [Basic Settings] */
 
 // Which part do you want to render?
-part=0; // [0:Everything,1:Front/back panels,2:Side,3:Connectors,4:Gear rack,5:Hinged lids,6:Hinge mount,7:Top hinge,8:Side hinge,9:Platform,10:Base]
+part=1; // [0:Everything,1:Front/back panels,2:Side,3:Connectors,4:Gear rack,5:Hinged lids,6:Hinge mount,7:Top hinge,8:Side hinge,9:Platform,10:Base]
 
 // Width of the card-storage area - should be the width of one of your cards
 card_x = 70;
@@ -18,7 +18,7 @@ card_y = 75;
 card_z = 100;
 
 // Specify a logo to stamp into the side panels
-side_logo = "manablack"; // [manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+side_logo = "manablue"; // [manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
 
 // Specify a logo to stamp into the front/back panels
 front_logo = "manablack"; // [manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
@@ -447,12 +447,33 @@ module Logo(logoname)
 {
 	union()
 	{
-		//color("green")translate([0,0,-1])cylinder(r=0.5, h=1, $fn=circle_resolution);cylinder(r=0.1, h=1, $fn=circle_resolution);
-		if(logoname == "manablue") manaLogoBlue();
-		if(logoname == "manawhite") manaLogoWhite();
-		if(logoname == "manared") manaLogoRed();
-		if(logoname == "manablack") manaLogoBlack();
-		if(logoname == "managreen") manaLogoGreen();
+		union()
+		{
+			//color("green")translate([0,0,-1])cylinder(r=0.5, h=1, $fn=circle_resolution);cylinder(r=0.1, h=1, $fn=circle_resolution);
+			if(logoname == "manablue") manaLogo("blue");
+			if(logoname == "manawhite") manaLogo("white");
+			if(logoname == "manared") manaLogo("red");
+			if(logoname == "manablack") manaLogo("black");
+			if(logoname == "managreen")  manaLogo("green");
+		}
+	}
+}
+
+module manaLogo(logoname)
+{
+	difference()
+	{
+		cylinder(r=0.5, h=1, $fn=circle_resolution);
+		translate([0,0,-j])
+		scale([0.9, 0.9, 1.2])
+		union()
+		{
+			if(logoname == "blue") manaLogoBlue();
+			if(logoname == "white") manaLogoWhite();
+			if(logoname == "red") manaLogoRed();
+			if(logoname == "black") manaLogoBlack();
+			if(logoname == "green") manaLogoGreen();
+		}
 	}
 }
 
