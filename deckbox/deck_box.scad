@@ -1,7 +1,24 @@
+// Based on:
 // mechanical deck box
 // Andrew Hoadley
-// Liceonse: erm... the one that means that you can do anything you like with it except sell it. :)
+// License: erm... the one that means that you can do anything you like with it except sell it. :)
 
+/* [Basic Settings] */
+
+// Which part do you want to render?
+part=0; // [0:Everything,1:Front/back panels,2:Side,3:Connectors,4:Gear rack,5:Hinged lids,6:Hinge mount,7:Top hinge,8:Side hinge,9:Platform,10:Base]
+
+// Width of the card-storage area - should be the width of one of your cards
+card_x = 70;
+
+// Depth of the card-storage area - should be the thickness of the entire stack of cards. For example, 60 sleeved cards are about 40mm.
+card_y = 75;
+
+// Height of the card-storage area - should the height of one of your cards.
+card_z = 100;
+
+
+/* [Advanced Settings] */
 // When rendering the AssembledLayout, explode parts by this amount. set to zero for normal assembly
 explode = 20;
 
@@ -12,28 +29,7 @@ circle_resolution = 120;
 // and your printer is probably better tuned than mine, so maybe it doesn't have to be this high for you.
 printing_tolerance = 0.2;
 
-part=0; // [0:Everything,1:Front/back panels,2:Side,3:Connectors,4:Gear rack,5:Hinged lids,6:Hinge mount,7:Top hinge,8:Side hinge,9:Platform,10:Base]
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//  Parameters.
-//
-// The idea was to make this completely parametric and I think it's mostly still ok, although I did get a 
-// little more lazy near the end.
-//
-// If you change the card sizes (or anything really) make sure that you check the print layouts and 
-// the assembled layout before you start printing. Particularly the later print layouts as some of them
-// use numeric constants rather than values calculated from the part sizes.
-//
-
-// Knock yourself out changing these-------------------------------
-
-// magic (or other) card size the below includes sleeves. ... 
-//    eg. change card_y value to be able to hold more cards
-card_x = 70;
-card_y = 75; // 60 sleeved = 40mm
-card_z = 100;
-
+/* [Hidden] */
 // There needs to be a little clearance above the cards otherwise the mechanism gets caught when it rotates
 card_clearance = 6;
 
