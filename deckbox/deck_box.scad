@@ -6,16 +6,13 @@
 explode = 20;
 
 // Cylinder resolution. set it to 10 if you're mucking about, about 120 if you're exporting STL's
-circleRes = 120;
+circle_resolution = 120;
 
 // Printing Tolerance. There's probably some places where I've missed adding the tolerance.
 // and your printer is probably better tuned than mine, so maybe it doesn't have to be this high for you.
-printingTolerance = 0.2;
+printing_tolerance = 0.2;
 
-
-manalogo = "none"; // [none, blue, green]
-
-part=0; // [0|1|2|3|4|5|6|7|8|9|10]
+part=0; // [0:Everything,1:Front/back panels,2:Side,3:Connectors,4:Gear rack,5:Hinged lids,6:Hinge mount,7:Top hinge,8:Side hinge,9:Platform,10:Base]
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -32,10 +29,10 @@ part=0; // [0|1|2|3|4|5|6|7|8|9|10]
 // Knock yourself out changing these-------------------------------
 
 // magic (or other) card size the below includes sleeves. ... 
-//    eg. change cardy value to be able to hold more cards
-cardx = 70;
-cardy = 75; // 60 sleeved = 40mm
-cardz = 100;
+//    eg. change card_y value to be able to hold more cards
+card_x = 70;
+card_y = 75; // 60 sleeved = 40mm
+card_z = 100;
 
 // There needs to be a little clearance above the cards otherwise the mechanism gets caught when it rotates
 cardclearance = 6;
@@ -60,14 +57,14 @@ pivotrad = 5;
 pivotheight = 3;
 
 // Better not to touch these
-ox = cardx /2 + wall;
-oy = cardy /2 + mechanism + 2 * wall;
-oz = cardz + cardclearance + wall*2;
+ox = card_x /2 + wall;
+oy = card_y /2 + mechanism + 2 * wall;
+oz = card_z + cardclearance + wall*2;
 ch = oz-rad; // height of the centre point of the axes that the lid rotates off
-gearHeight = wall+ mechanism-printingTolerance;
+gearHeight = wall+ mechanism-printing_tolerance;
 
 // Jitter is used to prevent coincident-surface problems with CSG. Should be set to something small.
-j=0.3;
+j=0.1;
 
 
 use <parametric_involute_gear_v5.0.scad>
@@ -80,13 +77,13 @@ use <gear_rack.scad>
 module notches()
 {
 	// Cut notch for side
-	translate ([ox-wall, notchHeight/2-printingTolerance, -j]) 	
-		cube(size = [50, notchHeight+printingTolerance*2, wall+j*2]);
-	translate ([ox-wall, notchHeight*2-printingTolerance, -j]) 	
-		cube(size = [50, notchHeight+printingTolerance*2, wall+j*2]);
+	translate ([ox-wall, notchHeight/2-printing_tolerance, -j]) 	
+		cube(size = [50, notchHeight+printing_tolerance*2, wall+j*2]);
+	translate ([ox-wall, notchHeight*2-printing_tolerance, -j]) 	
+		cube(size = [50, notchHeight+printing_tolerance*2, wall+j*2]);
 	// Cut notch for bottom
-	translate ([ox-notchHeight*3/2-printingTolerance, -j, -j]) 	
-		cube(size = [notchHeight+printingTolerance*2, wall+printingTolerance+j, wall+j*2]);
+	translate ([ox-notchHeight*3/2-printing_tolerance, -j, -j]) 	
+		cube(size = [notchHeight+printing_tolerance*2, wall+printing_tolerance+j, wall+j*2]);
 }
 
 module base_quarter()
@@ -94,21 +91,21 @@ module base_quarter()
 
 	difference()
 	{
-		cube([ox-wall-printingTolerance*2, oy, wall]);
+		cube([ox-wall-printing_tolerance*2, oy, wall]);
 
 		// edge notches
-		translate ([-j, -printingTolerance, -j])
-			cube([ox-notchHeight*3/2+printingTolerance+j, wall+printingTolerance, wall+j*2]);
-		translate ([ox-notchHeight/2+printingTolerance*2, -printingTolerance, -j])
-			cube([notchHeight, wall+printingTolerance*2, 100]);
+		translate ([-j, -printing_tolerance, -j])
+			cube([ox-notchHeight*3/2+printing_tolerance+j, wall+printing_tolerance, wall+j*2]);
+		translate ([ox-notchHeight/2+printing_tolerance*2, -printing_tolerance, -j])
+			cube([notchHeight, wall+printing_tolerance*2, 100]);
 
 		// notches for the inner supports
 		translate([0, wall+mechanism, 0])
 		{
-			translate ([slidewidth+printingTolerance, -printingTolerance, -j])
-				cube([ox-notchHeight*3/2-slidewidth, wall+printingTolerance, wall+j*2]);
-			translate ([ox-notchHeight/2+printingTolerance*2, -printingTolerance, -j])
-				cube([notchHeight, wall+printingTolerance*2, 100]);
+			translate ([slidewidth+printing_tolerance, -printing_tolerance, -j])
+				cube([ox-notchHeight*3/2-slidewidth, wall+printing_tolerance, wall+j*2]);
+			translate ([ox-notchHeight/2+printing_tolerance*2, -printing_tolerance, -j])
+				cube([notchHeight, wall+printing_tolerance*2, 100]);
 		}
 
 
@@ -134,7 +131,7 @@ module face_half()
 		cube(size = [ox, oz, wall]);
 		
 		translate ([rad, ch, -j]) 	
-		cylinder(h=wall+j*2, r=rad+printingTolerance, $fn=circleRes);
+		cylinder(h=wall+j*2, r=rad+printing_tolerance, $fn=circle_resolution);
 		
 		translate ([-j, ch-chx, -j]) cube(size = [ox+j*2, oz-ch+chx+j, wall+j*2]);
 	    
@@ -149,16 +146,16 @@ module rack_lift_half()
 {
 	union()
 	{
-		translate([slidewidth, 50, mechanism/2-printingTolerance])
+		translate([slidewidth, 50, mechanism/2-printing_tolerance])
 		rotate(a=[0, 90, 180])
-		gear_rack(2, 12, mechanism-printingTolerance*2, slidewidth+2);
+		gear_rack(2, 12, mechanism-printing_tolerance*2, slidewidth+2);
 		
 		difference()
 		{
-			cube([slidewidth-printingTolerance, 40, mechanism+wall-printingTolerance]);
+			cube([slidewidth-printing_tolerance, 40, mechanism+wall-printing_tolerance]);
 			
 			translate([-j, wall, -j])
-			cube([slidewidth-wall+printingTolerance+j, wall+printingTolerance, mechanism+wall-printingTolerance+j*2]);
+			cube([slidewidth-wall+printing_tolerance+j, wall+printing_tolerance, mechanism+wall-printing_tolerance+j*2]);
 		}
 	}
 }
@@ -169,12 +166,12 @@ module rack_lift_platform_half()
 {
 	union()
 	{
-		cube([slidewidth-wall-printingTolerance, cardy+(wall+mechanism-printingTolerance)*2, wall-printingTolerance*2]);
+		cube([slidewidth-wall-printing_tolerance, card_y+(wall+mechanism-printing_tolerance)*2, wall-printing_tolerance*2]);
 
-		translate([0, wall+mechanism+printingTolerance*3, 0])
+		translate([0, wall+mechanism+printing_tolerance*3, 0])
 		{
-			cube([cardx/2-printingTolerance*4, cardy-printingTolerance*6, wall-printingTolerance*2]);
-			cube([slidewidth-wall-printingTolerance, cardy-printingTolerance*6, 2*wall-printingTolerance*2]);
+			cube([card_x/2-printing_tolerance*4, card_y-printing_tolerance*6, wall-printing_tolerance*2]);
+			cube([slidewidth-wall-printing_tolerance, card_y-printing_tolerance*6, 2*wall-printing_tolerance*2]);
 		}
 	}
 }
@@ -190,12 +187,12 @@ module mechanism_half()
 			cube(size = [ox, ch, wall]);
 			translate ([rad, ch, 0])
 			{
-				cylinder(h=wall, r=cardx/2-rad, $fn=circleRes);
-				cylinder(h=wall+pivotheight-printingTolerance, r=pivotrad, $fn=circleRes);
+				cylinder(h=wall, r=card_x/2-rad, $fn=circle_resolution);
+				cylinder(h=wall+pivotheight-printing_tolerance, r=pivotrad, $fn=circle_resolution);
 			}
 		}
 		notches();
-		translate([-j, -j, -j]) cube(size=[slidewidth+printingTolerance+j, ch-chx+j, wall+j*2]);
+		translate([-j, -j, -j]) cube(size=[slidewidth+printing_tolerance+j, ch-chx+j, wall+j*2]);
 	}
 }
 
@@ -208,9 +205,9 @@ module hinge(r, hole, length)
 		hull()
 		{
 			cube([r, r, length]);
-			translate([r, r, 0]) cylinder(h=length, r=r, $fn=circleRes);
+			translate([r, r, 0]) cylinder(h=length, r=r, $fn=circle_resolution);
 		}
-		translate([r, r, -j]) cylinder(h=length+j*2, r=hole, $fn=circleRes);
+		translate([r, r, -j]) cylinder(h=length+j*2, r=hole, $fn=circle_resolution);
 	}
 }
 
@@ -222,7 +219,7 @@ module side_half()
 	{
 		cube(size = [oy, ch-rad, wall]);
 		translate([oy-wall, 0, 0]) sideTab();
-		translate([cardy/2, 0, 0]) sideTab();
+		translate([card_y/2, 0, 0]) sideTab();
 	}
 }
 
@@ -240,7 +237,7 @@ module top_half()
 		{
 			cube(size = [ox, rad*2, wall]);
 			translate ([rad, rad, 0]) 	
-			cylinder(h=100, r=rad-printingTolerance, $fn=circleRes);
+			cylinder(h=100, r=rad-printing_tolerance, $fn=circle_resolution);
 		}
 
 		translate ([rad, rad, 0])
@@ -250,12 +247,12 @@ module top_half()
 				union()
 				{
 					gear (circular_pitch=360, gear_thickness = gearHeight, rim_thickness = gearHeight, hub_thickness = gearHeight, circles=4);
-					cylinder(h=gearHeight, r=cardx/2-rad, $fn=circleRes);
-					translate([pivotrad+printingTolerance*2, -pivotrad, 0])
-					cube([ox-rad-(pivotrad+printingTolerance*2), pivotrad*2, gearHeight]);
+					cylinder(h=gearHeight, r=card_x/2-rad, $fn=circle_resolution);
+					translate([pivotrad+printing_tolerance*2, -pivotrad, 0])
+					cube([ox-rad-(pivotrad+printing_tolerance*2), pivotrad*2, gearHeight]);
 				}
 				
-				cylinder(h=gearHeight+j, r=pivotrad+printingTolerance, $fn=circleRes);
+				cylinder(h=gearHeight+j, r=pivotrad+printing_tolerance, $fn=circle_resolution);
 				translate([ox-rad, -100, -j]) cube([100, 300, 100]);
 			}
 		}
@@ -271,7 +268,7 @@ module top_half()
 		//  key system to hold the two parts of the top together
 		translate ([notchHeight, rad*2+cardclearance+wall, 0]) 
 		scale([1, -1, 1])
-		hinge(hingeRad, hingeHole, oy-cardy/6-printingTolerance);
+		hinge(hingeRad, hingeHole, oy-card_y/6-printing_tolerance);
 	}
 }
 
@@ -282,17 +279,17 @@ module lid_half()
 	union()
 	{
 		translate([-j, hingeRad*2-j, 0])
-		cube([oy - wall - printingTolerance*2 + j, ox-notchHeight-wall-2*hingeRad+j*2, wall]);
+		cube([oy - wall - printing_tolerance*2 + j, ox-notchHeight-wall-2*hingeRad+j*2, wall]);
 		
 		translate ([-j, hingeRad*2, 0]) 
 		scale([1, -1, 1])
 		rotate(a=[90, 0, 90])
-		hinge(hingeRad, hingeHole, cardy/6-printingTolerance+j);
+		hinge(hingeRad, hingeHole, card_y/6-printing_tolerance+j);
 
-		translate ([cardy/6, ox-notchHeight-wall, 0]) 
+		translate ([card_y/6, ox-notchHeight-wall, 0]) 
 		scale([-1, -1, 1])
 		rotate(a=[90, 0, -90])
-		hinge(hingeRad, hingeHole, cardy/3-printingTolerance);
+		hinge(hingeRad, hingeHole, card_y/3-printing_tolerance);
 	}
 }
 
@@ -303,17 +300,17 @@ module top_side_half()
 	union()
 	{
 		translate([0, hingeRad*2-j, 0])
-		cube([cardy/2-printingTolerance, rad*2-4*hingeRad+cardclearance+wall+j*2, wall]);
+		cube([card_y/2-printing_tolerance, rad*2-4*hingeRad+cardclearance+wall+j*2, wall]);
 
 		translate ([0, hingeRad*2, 0]) 
 		scale([1, -1, 1])
 		rotate(a=[90, 0, 90])
-		hinge(hingeRad, hingeHole, cardy/6-printingTolerance);
+		hinge(hingeRad, hingeHole, card_y/6-printing_tolerance);
 
-		translate ([cardy/6, rad*2-2*hingeRad+cardclearance+wall, 0]) 
+		translate ([card_y/6, rad*2-2*hingeRad+cardclearance+wall, 0]) 
 		scale([-1, -1, 1])
 		rotate(a=[90, 0, -90])
-		hinge(hingeRad, hingeHole, cardy/3-printingTolerance);
+		hinge(hingeRad, hingeHole, card_y/3-printing_tolerance);
 	}
 }
 
@@ -321,8 +318,8 @@ module top_side_half()
 //CSG Checked
 module top_key()
 {
-	width=notchHeight-wall*2-printingTolerance;
-	thickness=keyThickness-printingTolerance;
+	width=notchHeight-wall*2-printing_tolerance;
+	thickness=keyThickness-printing_tolerance;
 	length=min(oy-wall, 20);
 	
 	translate([0, -length/2, 0])
@@ -358,50 +355,15 @@ module base()
 	}
 }
 
-module manaLogoBlue()
-{
-	union()
-	{
-		scale(1.3, 1.3, 1.3)
-		translate([-165, -12, -11])
-		import("blue.stl");
-	}
-}
-
-module manaLogoGreen()
-{
-	union()
-	{
-		scale(1.3, 1.3, 1.3)
-		translate([-193, -12, -11])
-		import("green.stl");
-	}
-}
-
 module frontAndBack()
 {
-	difference()
+	union()
 	{
-		union()
-		{
-			face_half();
-			
-			scale ([-1, 1, 1])
-			face_half();
-			
-		}
-		translate([0, oz/4, wall*0.5])
-		union()
-		{
-			if(manalogo == "blue")
-			{
-				manaLogoBlue();
-			}
-			if(manalogo == "green")
-			{
-				manaLogoGreen();
-			}
-		}
+		face_half();
+		
+		scale ([-1, 1, 1])
+		face_half();
+		
 	}
 }
 
@@ -423,9 +385,9 @@ module side()
 		
 		translate([j, 0, 0]) scale([-1, 1, 1]) side_half();
 		
-		translate([cardy/6+printingTolerance, ch-rad, 0])
+		translate([card_y/6+printing_tolerance, ch-rad, 0])
 		rotate(a=[0, -90, 0])
-		hinge(hingeRad, hingeHole, cardy/3-printingTolerance*2);
+		hinge(hingeRad, hingeHole, card_y/3-printing_tolerance*2);
 	}
 }
 
@@ -535,12 +497,12 @@ module assembledLayout()
 
 	// mechanisms
 	color("RosyBrown")
-	translate([0, -cardy/2, 0])
+	translate([0, -card_y/2, 0])
 	rotate(a=[90, 0, 0])
 	mechanism();
 
 	color("RosyBrown")
-	translate([0, cardy/2, 0])
+	translate([0, card_y/2, 0])
 	rotate(a=[90, 0, 180])
 	mechanism();
 
@@ -558,12 +520,12 @@ module assembledLayout()
 	// rack  / pinion card lift (slides)
 	// mechanisms
 	color("SeaGreen")
-	translate([0, -cardy/2-wall-mechanism-explode/2, 0])
+	translate([0, -card_y/2-wall-mechanism-explode/2, 0])
 	rotate(a=[90, 0, 180])
 	rack_lift();
 
 	color("SeaGreen")
-	translate([0, cardy/2+wall+mechanism+explode/2, 0])
+	translate([0, card_y/2+wall+mechanism+explode/2, 0])
 	rotate(a=[90, 0, 0])
 	rack_lift();
 
@@ -598,11 +560,11 @@ module assembledLayout()
 	
 	// connectors
 	translate([notchHeight+explode-6, 0, oz+wall+2+explode])
-	translate([-(notchHeight-wall*2-printingTolerance)/2, 0, 0])
+	translate([-(notchHeight-wall*2-printing_tolerance)/2, 0, 0])
 	top_key();
 
 	translate([-notchHeight-explode+6, 0, oz+wall+2+explode])
-	translate([-(notchHeight-wall*2-printingTolerance)/2, 0, 0])
+	translate([-(notchHeight-wall*2-printing_tolerance)/2, 0, 0])
 	top_key();
 
 	translate([-notchHeight-explode, 0, oz+cardclearance+wall+explode])
