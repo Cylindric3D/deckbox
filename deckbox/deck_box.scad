@@ -15,46 +15,7 @@ printingTolerance = 0.2;
 
 manalogo = "none"; // [none, blue, green]
 
-part=2; // [0|1|2|3|4|5|6|7|8]
-
-if(part==0)
-{
-	// Complete render with parts moved into position (possibly with parts exploded as per "explode" value above
-	assembledLayout();
-}
-
-if(part==1)
-{
-	printLayout1(); // two big panels
-}
-if(part==2)
-{
-	printLayout2(); // two big panels with hinges
-}
-if(part==3)
-{
-	printLayout3(); // two toothed bars
-}
-if(part==4)
-{
-	printLayout4(); // four big geared parts
-}
-if(part==5)
-{
-	printLayout5(); // two panels
-}
-if(part==6)
-{
-	printLayout6(); // 4 hinged bits
-}
-if(part==7)
-{
-	printLayout7(); // single plate
-}
-if(part==8)
-{
-	printLayout8(); // single plate
-}
+part=0; // [0|1|2|3|4|5|6|7|8|9|10]
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -106,7 +67,7 @@ ch = oz-rad; // height of the centre point of the axes that the lid rotates off
 gearHeight = wall+ mechanism-printingTolerance;
 
 // Jitter is used to prevent coincident-surface problems with CSG. Should be set to something small.
-j=0.1;
+j=0.3;
 
 
 use <parametric_involute_gear_v5.0.scad>
@@ -244,7 +205,7 @@ module hinge(r, hole, length)
 {
 	difference()
 	{
-		union()
+		hull()
 		{
 			cube([r, r, length]);
 			translate([r, r, 0]) cylinder(h=length, r=r, $fn=circleRes);
@@ -320,13 +281,13 @@ module lid_half()
 {
 	union()
 	{
-		translate([-1, hingeRad*2-j, 0])
-		cube([oy - wall - printingTolerance*2, ox-notchHeight-wall-2*hingeRad+j*2, wall]);
+		translate([-j, hingeRad*2-j, 0])
+		cube([oy - wall - printingTolerance*2 + j, ox-notchHeight-wall-2*hingeRad+j*2, wall]);
 		
-		translate ([-1, hingeRad*2, 0]) 
+		translate ([-j, hingeRad*2, 0]) 
 		scale([1, -1, 1])
 		rotate(a=[90, 0, 90])
-		hinge(hingeRad, hingeHole, 1+cardy/6-printingTolerance);
+		hinge(hingeRad, hingeHole, cardy/6-printingTolerance+j);
 
 		translate ([cardy/6, ox-notchHeight-wall, 0]) 
 		scale([-1, -1, 1])
@@ -495,9 +456,11 @@ module topLayout2()
 
 module lid()
 {
-	lid_half();
-	scale([-1, 1, 1])
+	union()
+	{
 		lid_half();
+		scale([-1, 1, 1]) lid_half();
+	}
 }
 
 module top_side()
@@ -511,91 +474,53 @@ module top_side()
 
 /////////////////////////////////////////////////////////////////////////
 // Layouts
-
-module printLayout1()
+if(part==0)
 {
-	translate([ox+printingGap/2, -rad, 0])
-		frontAndBack();
-	translate([-ox-printingGap/2, -rad, 0])
-		frontAndBack();
-
+	// Complete render with parts moved into position (possibly with parts exploded as per "explode" value above
+	assembledLayout();
 }
 
-module printLayout2()
+if(part==1)
 {
-	rotate([0, 0, 90])
+	frontAndBack();
+}
+if(part==2)
 {
-
-	translate([oy+printingGap/2, printingGap/2, 0])
-		side();
-	translate([-oy-printingGap/2, printingGap/2, 0])
-		side();
-
-      // top key
-	translate([35+printingGap, -20-printingGap/2, 0])
+	side();
+}
+if(part==3)
+{
 	top_key();
-	translate([-35+printingGap, -20-printingGap/2, 0])
-	top_key();
-
 }
-}
-
-module printLayout3()
+if(part==4)
 {
-	rotate([0, 0, 90])
-{
-
-      // lift
-	translate([35, -10-printingGap/2, 0])
-		rotate(a=[0, 0, 90])
-			rack_lift();
-
-      // lift
-	translate([35, -40-printingGap/2, 0])
-		rotate(a=[0, 0, 90])
-			rack_lift();
-
+	rack_lift();
 }
-}
-
-
-module printLayout4()
-{
-	rotate([0, 0, 90])
+if(part==5)
 {
 	topLayout2();
-
-	scale([1, -1, 1])
-		topLayout2();
 }
-}
-
-module printLayout5()
+if(part==6)
 {
-	translate([ox+printingGap/2, -50, 0])
-			mechanism();
-	translate([-ox-printingGap/2, -50, 0])
-			mechanism();
-
+	mechanism();
 }
-
-module printLayout6()
+if(part==7)
 {
-	translate([ox/2+10+printingGap/2, -33, 0]) lid();
-	translate([-ox/2-10-printingGap/2, -33, 0]) lid();
-	translate([-ox/2-printingGap/2, 0, 0]) top_side();
-	translate([ox/2+printingGap/2, 0, 0]) top_side();
+	lid();
 }
-
-module printLayout7()
+if(part==8)
+{
+	top_side();
+}
+if(part==9)
 {
 	rack_lift_platform();
 }
-
-module printLayout8()
+if(part==10)
 {
 	base();
 }
+
 
 module assembledLayout()
 {
@@ -698,19 +623,4 @@ module assembledLayout()
 	
 	translate([0, -oy, -explode*0.5])
 	rack_lift_platform();
-
 }
-
-module showBuildArea()
-{
-	// show build area to double check print layouts
-	translate([-90, -80, -1])
-		cube([180, 160, 1]);
-}
-
-// debug. Show other items, including a quad the size of the build area on my reprap to make sure everything fits
-// hinge(3, 1, 50);
-//showBuildArea();
-//rack_lift_platform();
-//lid();
-//top_side();
