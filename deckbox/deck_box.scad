@@ -17,10 +17,15 @@ card_y = 75;
 // Height of the card-storage area - should the height of one of your cards.
 card_z = 100;
 
+// Specify a logo to stamp into the side panels
+side_logo = "manablack"; // [manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+
+// Specify a logo to stamp into the front/back panels
+front_logo = "manablack"; // [manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
 
 /* [Advanced Settings] */
 // When rendering the AssembledLayout, explode parts by this amount. set to zero for normal assembly
-explode = 20;
+explode = 0;
 
 // Cylinder resolution. set it to 10 if you're mucking about, about 120 if you're exporting STL's
 circle_resolution = 120;
@@ -350,13 +355,17 @@ module base()
 
 module frontAndBack()
 {
-	union()
+	difference()
 	{
-		face_half();
+		union()
+		{
+			face_half();
+			scale ([-1, 1, 1]) face_half();
+		}
 		
-		scale ([-1, 1, 1])
-		face_half();
-		
+		translate([0, (ch-rad)/2, wall/2])
+		scale(min(ox, oz)*1.5)
+		Logo(side_logo);
 	}
 }
 
@@ -372,15 +381,22 @@ module mechanism()
 module side()
 {
 	color("red")
-	union()
+	difference()
 	{
-		translate([-j, 0, 0]) side_half();
+		union()
+		{
+			translate([-j, 0, 0]) side_half();
+			
+			translate([j, 0, 0]) scale([-1, 1, 1]) side_half();
+			
+			translate([card_y/6+printing_tolerance, ch-rad, 0])
+			rotate(a=[0, -90, 0])
+			hinge(hingeRad, hingeHole, card_y/3-printing_tolerance*2);
+		}
 		
-		translate([j, 0, 0]) scale([-1, 1, 1]) side_half();
-		
-		translate([card_y/6+printing_tolerance, ch-rad, 0])
-		rotate(a=[0, -90, 0])
-		hinge(hingeRad, hingeHole, card_y/3-printing_tolerance*2);
+		translate([0, (ch-rad)/2, wall/2])
+		scale(min(oy, ch-rad))
+		Logo(side_logo);
 	}
 }
 
@@ -424,6 +440,72 @@ module top_side()
 	scale([-1, 1, 1])
 		top_side_half();
 }
+
+/////////////////////////////////////////////////////////////////////////
+// Logos
+module Logo(logoname)
+{
+	union()
+	{
+		//color("green")translate([0,0,-1])cylinder(r=0.5, h=1, $fn=circle_resolution);cylinder(r=0.1, h=1, $fn=circle_resolution);
+		if(logoname == "manablue") manaLogoBlue();
+		if(logoname == "manawhite") manaLogoWhite();
+		if(logoname == "manared") manaLogoRed();
+		if(logoname == "manablack") manaLogoBlack();
+		if(logoname == "managreen") manaLogoGreen();
+	}
+}
+
+module manaLogoBlue()
+{
+	union()
+	{
+		scale([0.029, 0.029, 0.4])
+		translate([-166, -16, -11.25])
+		import("blue.stl");
+	}
+}
+
+module manaLogoWhite()
+{
+	union()
+	{
+		scale([0.026, 0.026, 0.4])
+		translate([-191, -18, -11.25])
+		import("white.stl");
+	}
+}
+
+module manaLogoRed()
+{
+	union()
+	{
+		scale([0.026, 0.026, 0.4])
+		translate([-195, -17, -11.25])
+		import("red.stl");
+	}
+}
+
+module manaLogoBlack()
+{
+	union()
+	{
+		scale([0.027, 0.027, 0.4])
+		translate([-190, -17, -11.25])
+		import("black.stl");
+	}
+}
+
+module manaLogoGreen()
+{
+	union()
+	{
+		scale([0.03, 0.03, 0.4])
+		translate([-193, -16, -11.25])
+		import("green.stl");
+	}
+}
+
 
 
 
