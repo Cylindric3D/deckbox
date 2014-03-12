@@ -35,7 +35,7 @@ card_y = 75; // 60 sleeved = 40mm
 card_z = 100;
 
 // There needs to be a little clearance above the cards otherwise the mechanism gets caught when it rotates
-cardclearance = 6;
+card_clearance = 6;
 
 // wall thickness
 wall = 3;
@@ -59,7 +59,7 @@ pivotheight = 3;
 // Better not to touch these
 ox = card_x /2 + wall;
 oy = card_y /2 + mechanism + 2 * wall;
-oz = card_z + cardclearance + wall*2;
+oz = card_z + card_clearance + wall*2;
 ch = oz-rad; // height of the centre point of the axes that the lid rotates off
 gearHeight = wall+ mechanism-printing_tolerance;
 
@@ -223,13 +223,13 @@ module side_half()
 
 module top_half()
 {
- //The height is incorrect. It's calculated using oz which already includes cardclearance + wall.
+ //The height is incorrect. It's calculated using oz which already includes card_clearance + wall.
  // Careful changes need to be made to fix it though.
 
 	union()
 	{
 		translate ([0, rad, 0]) 	
-		cube(size = [ox, rad+cardclearance+wall, wall]);
+		cube(size = [ox, rad+card_clearance+wall, wall]);
 		intersection()
 		{
 			cube(size = [ox, rad*2, wall]);
@@ -256,14 +256,14 @@ module top_half()
 
 		difference()
 		{
-			translate ([0, rad*2+cardclearance+wall-wall*2, 0]) 
+			translate ([0, rad*2+card_clearance+wall-wall*2, 0]) 
 			cube(size = [notchHeight, wall*2, oy]);
-			translate ([wall, rad*2+cardclearance+wall-wall-keyThickness/2, wall]) 
+			translate ([wall, rad*2+card_clearance+wall-wall-keyThickness/2, wall]) 
 			cube(size = [notchHeight-wall*2, keyThickness, oy-wall+j]);
 		}
 		
 		//  key system to hold the two parts of the top together
-		translate ([notchHeight, rad*2+cardclearance+wall, 0]) 
+		translate ([notchHeight, rad*2+card_clearance+wall, 0]) 
 		scale([1, -1, 1])
 		hinge(hingeRad, hingeHole, oy-card_y/6-printing_tolerance);
 	}
@@ -297,14 +297,14 @@ module top_side_half()
 	union()
 	{
 		translate([0, hingeRad*2-j, 0])
-		cube([card_y/2-printing_tolerance, rad*2-4*hingeRad+cardclearance+wall+j*2, wall]);
+		cube([card_y/2-printing_tolerance, rad*2-4*hingeRad+card_clearance+wall+j*2, wall]);
 
 		translate ([0, hingeRad*2, 0]) 
 		scale([1, -1, 1])
 		rotate(a=[90, 0, 90])
 		hinge(hingeRad, hingeHole, card_y/6-printing_tolerance);
 
-		translate ([card_y/6, rad*2-2*hingeRad+cardclearance+wall, 0]) 
+		translate ([card_y/6, rad*2-2*hingeRad+card_clearance+wall, 0]) 
 		scale([-1, -1, 1])
 		rotate(a=[90, 0, -90])
 		hinge(hingeRad, hingeHole, card_y/3-printing_tolerance);
@@ -550,8 +550,8 @@ module assembledLayout()
 	top_half();
 
 	// top
-	// bug - height isn't supposed to include two lots of cardclearance and wall
-	translate([notchHeight+explode, 0, oz+cardclearance+wall+explode])
+	// bug - height isn't supposed to include two lots of card_clearance and wall
+	translate([notchHeight+explode, 0, oz+card_clearance+wall+explode])
 	rotate(a=[0, 180, -90])
 	lid();
 	
@@ -564,16 +564,16 @@ module assembledLayout()
 	translate([-(notchHeight-wall*2-printing_tolerance)/2, 0, 0])
 	top_key();
 
-	translate([-notchHeight-explode, 0, oz+cardclearance+wall+explode])
+	translate([-notchHeight-explode, 0, oz+card_clearance+wall+explode])
 	rotate(a=[0, 180, 90])
 	lid();
 	
 	// top side
-	translate([-ox-hingeRad*2+wall-explode, 0, oz+cardclearance+wall+explode/2])
+	translate([-ox-hingeRad*2+wall-explode, 0, oz+card_clearance+wall+explode/2])
 	rotate(a=[90, 180, 90])
 	top_side();
 
-	translate([ox+hingeRad*2-wall+explode, 0, oz+cardclearance+wall+explode/2])
+	translate([ox+hingeRad*2-wall+explode, 0, oz+card_clearance+wall+explode/2])
 	rotate(a=[90, 180, -90])
 	top_side();
 
