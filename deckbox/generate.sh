@@ -19,3 +19,5 @@ openscad -D part=15 -D circleRes=120 -D j=0.1 -o stl/deck_box-plate_E-mechanism.
 openscad -D part=16 -D circleRes=120 -D j=0.1 -o stl/deck_box-plate_F-upperhinges.stl deck_box.scad
 openscad -D part=17 -D circleRes=120 -D j=0.1 -o stl/deck_box-plate_G-platform.stl deck_box.scad
 
+openscad -D part=13 -D circleRes=120 -D j=0.1 -D front_logo=\"manawhite\" -D back_logo=\"manared\" -o stl\logo_sample-1.stl deck_box.scad
+openscad -D part=14 -D circleRes=120 -D j=0.1 -D left_logo=\"manablue\" -D right_logo=\"manablack\" -o stl\logo_sample-2.stl deck_box.scad
