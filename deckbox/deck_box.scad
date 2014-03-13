@@ -17,18 +17,6 @@ card_y = 75;
 // Height of the card-storage area - should the height of one of your cards.
 card_z = 100;
 
-// Specify a logo to stamp into the left side panel
-left_logo = "manawhite"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
-
-// Specify a logo to stamp into the right side panel
-right_logo = "manablue"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
-
-// Specify a logo to stamp into the front panel
-front_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
-
-// Specify a logo to stamp into the back panel
-back_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
-
 /* [Advanced Settings] */
 // When rendering the AssembledLayout, explode parts by this amount. set to zero for normal assembly
 explode = 0;
@@ -50,6 +38,18 @@ build_plate_manual_x = 180; //[100:400]
 build_plate_manual_y = 180; //[100:400]
 
 /* [Hidden] */
+// Specify a logo to stamp into the left side panel
+left_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+
+// Specify a logo to stamp into the right side panel
+right_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+
+// Specify a logo to stamp into the front panel
+front_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+
+// Specify a logo to stamp into the back panel
+back_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+
 // There needs to be a little clearance above the cards otherwise the mechanism gets caught when it rotates
 card_clearance = 6;
 
@@ -83,7 +83,7 @@ gearHeight = wall+ mechanism-printing_tolerance;
 j=0.1;
 
 
-use<build_plate.scad>;
+use<utils/build_plate.scad>;
 
 
 ///////////////////////////////////////////////////////////////////
@@ -476,6 +476,9 @@ module Logo(logoname)
 	}
 }
 
+// Magic the Gathering Mana badges by Stuartblarg
+// It is licensed under the Creative Commons - Attribution license.
+// http://www.thingiverse.com/thing:104988
 module manaLogo(logoname)
 {
 	difference()
