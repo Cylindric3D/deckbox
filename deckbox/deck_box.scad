@@ -17,11 +17,17 @@ card_y = 75;
 // Height of the card-storage area - should the height of one of your cards.
 card_z = 100;
 
-// Specify a logo to stamp into the side panels
-side_logo = "manablue"; // [manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+// Specify a logo to stamp into the left side panel
+left_logo = "manawhite"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
 
-// Specify a logo to stamp into the front/back panels
-front_logo = "manablack"; // [manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+// Specify a logo to stamp into the right side panel
+right_logo = "manablue"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+
+// Specify a logo to stamp into the front panel
+front_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+
+// Specify a logo to stamp into the back panel
+back_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
 
 /* [Advanced Settings] */
 // When rendering the AssembledLayout, explode parts by this amount. set to zero for normal assembly
@@ -33,6 +39,15 @@ circle_resolution = 120;
 // Printing Tolerance. There's probably some places where I've missed adding the tolerance.
 // and your printer is probably better tuned than mine, so maybe it doesn't have to be this high for you.
 printing_tolerance = 0.2;
+
+/* [Printer] */
+build_plate_selector = 3; //[0:Replicator 2,1: Replicator,2:Thingomatic,3:Manual]
+
+//when Build Plate Selector is set to "manual" this controls the build plate x dimension
+build_plate_manual_x = 180; //[100:400]
+
+//when Build Plate Selector is set to "manual" this controls the build plate y dimension
+build_plate_manual_y = 180; //[100:400]
 
 /* [Hidden] */
 // There needs to be a little clearance above the cards otherwise the mechanism gets caught when it rotates
@@ -66,6 +81,9 @@ gearHeight = wall+ mechanism-printing_tolerance;
 
 // Jitter is used to prevent coincident-surface problems with CSG. Should be set to something small.
 j=0.1;
+
+
+use<build_plate.scad>;
 
 
 ///////////////////////////////////////////////////////////////////
@@ -135,7 +153,6 @@ module face_half()
 	    
 		notches();
 	}
-
 }
 
 
@@ -353,7 +370,7 @@ module base()
 	}
 }
 
-module frontAndBack()
+module frontAndBack(logoname)
 {
 	difference()
 	{
@@ -365,7 +382,7 @@ module frontAndBack()
 		
 		translate([0, (ch-rad)/2, wall/2])
 		scale(min(ox, oz)*1.5)
-		Logo(side_logo);
+		Logo(logoname);
 	}
 }
 
@@ -378,7 +395,7 @@ module mechanism()
 	}
 }
 
-module side()
+module side(logoname)
 {
 	color("red")
 	difference()
@@ -395,8 +412,8 @@ module side()
 		}
 		
 		translate([0, (ch-rad)/2, wall/2])
-		scale(min(oy, ch-rad))
-		Logo(side_logo);
+		scale(min(oy, ch-rad)*0.8)
+		Logo(logoname);
 	}
 }
 
@@ -540,11 +557,11 @@ if(part==0)
 
 if(part==1)
 {
-	frontAndBack();
+	frontAndBack(front_logo);
 }
 if(part==2)
 {
-	side();
+	side(left_logo);
 }
 if(part==3)
 {
@@ -578,18 +595,54 @@ if(part==10)
 {
 	base();
 }
-
+if(part==11) // PLATE-A is just the base
+{
+	translate([0, -oy, 0]) base();
+}
+if(part==12) // PLATE-B is the four corners and their joiner
+{
+	translate([0, (rad+card_clearance+wall+rad+wall), 0]) rotate([0, 0, 180]) topLayout2();
+	translate([0, -(rad+card_clearance+wall+rad+wall), 0]) topLayout2();
+	translate([0, (rad+card_clearance+wall+rad), 0]) rotate([0, 0, 90]) top_key();
+	translate([0, -(rad+card_clearance+wall+rad), 0]) rotate([0, 0, 90]) top_key();
+}
+if(part==13) // PLATE-C is the two outer cutout panels and rack lifts
+{
+	translate([0, wall/2, 0]) frontAndBack(front_logo);
+	rotate([0, 0, 180]) translate([0, wall/2, 0]) frontAndBack(back_logo);
+	translate([ox+12+wall, -50, 0]) rack_lift();
+	translate([-(ox+12+wall), -50, 0]) rack_lift();
+}
+if(part==14) // PLATE-D is the lower hinge panels
+{
+	translate([0, wall/2, 0]) side(left_logo);
+	rotate([0, 0, 180]) translate([0, wall/2, 0]) side(right_logo);
+}
+if(part==15) // PLATE-E is the large mechanism-holding plates
+{
+	translate([ox+wall/2, -ch/2, 0]) mechanism();
+	translate([-ox-wall/2, -ch/2, 0]) mechanism();
+}
+if(part==16) // PLATE-F is the upper hinged panels
+{
+	translate([0, -(rad*2-4*hingeRad+card_clearance+wall)-hingeRad*4-wall/2, 0]) top_side();
+	translate([0, (rad*2-4*hingeRad+card_clearance+wall)+hingeRad*4+wall/2, 0]) rotate([0, 0, 180]) top_side();
+}
+if(part==17) // PLATE-G is the lift platform
+{
+	translate([0, -(card_y+(wall+mechanism-printing_tolerance)*2)/2, 0]) rack_lift_platform();
+}
 
 module assembledLayout()
 {
 	// front and back
 	translate([0, -oy+wall-explode, 0])
 	rotate(a=[90, 0, 0])
-	frontAndBack();
+	frontAndBack(front_logo);
 
 	translate([0, oy-wall+explode, 0])
 	rotate(a=[90, 0, 180])
-	frontAndBack();
+	frontAndBack(back_logo);
 
 	// mechanisms
 	color("RosyBrown")
@@ -606,12 +659,12 @@ module assembledLayout()
 	color("blue")
 	translate([ox - wall + explode, 0, 0])
 	rotate(a=[90, 0, 90])
-	side();
+	side(right_logo);
 
 	color("blue")
 	translate([-ox + wall -explode, 0, 0])
 	rotate(a=[90, 0, -90])
-	side();
+	side(left_logo);
 
 	// rack  / pinion card lift (slides)
 	// mechanisms
@@ -682,6 +735,8 @@ module assembledLayout()
 	translate([0, -oy, -explode*0.5])
 	rack_lift_platform();
 }
+
+%build_plate(build_plate_selector, build_plate_manual_x, build_plate_manual_y);
 
 
 /* ==========================================================================
