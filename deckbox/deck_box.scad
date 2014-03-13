@@ -6,7 +6,7 @@
 /* [Basic Settings] */
 
 // Which part do you want to render?
-part=1; // [0:Everything,1:Front/back panels,2:Side,3:Connectors,4:Gear rack,5:Hinged lids,6:Hinge mount,7:Top hinge,8:Side hinge,9:Platform,10:Base]
+part=1; // [0:Instructions,1:Front/back panels,2:Side,3:Connectors,4:Gear rack,5:Hinged lids,6:Hinge mount,7:Top hinge,8:Side hinge,9:Platform,10:Base,11:Plate A,12:Plate B,13:Plate C,14:Plate D,15:Plate E,16:Plate F,17:Plate G]
 
 // Width of the card-storage area - should be the width of one of your cards
 card_x = 70;
