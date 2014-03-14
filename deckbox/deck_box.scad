@@ -84,6 +84,7 @@ j=0.1;
 
 
 use<utils/build_plate.scad>;
+use<utils/Write.scad>;
 
 
 ///////////////////////////////////////////////////////////////////
@@ -444,10 +445,17 @@ module topLayout2()
 
 module lid()
 {
-	union()
+	difference()
 	{
-		lid_half();
-		scale([-1, 1, 1]) lid_half();
+		union()
+		{
+			lid_half();
+			scale([-1, 1, 1]) lid_half();
+		}
+		
+		translate([0,(ox-notchHeight)/2,0]) 
+		rotate([180,0,0]) 
+		write("YOUR NAME HERE",h=8, t=2, center=true, font="BlackRose.dxf");
 	}
 }
 
