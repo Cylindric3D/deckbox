@@ -51,7 +51,7 @@ front_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manabl
 back_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
 
 // There needs to be a little clearance above the cards otherwise the mechanism gets caught when it rotates
-card_clearance = 6;
+card_clearance = 10;
 
 // wall thickness
 wall = 3;
