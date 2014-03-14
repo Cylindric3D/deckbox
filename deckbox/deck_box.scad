@@ -6,13 +6,13 @@
 /* [Basic Settings] */
 
 // Which part do you want to render?
-part=1; // [0:Instructions,1:Front/back panels,2:Side,3:Connectors,4:Gear rack,5:Hinged lids,6:Hinge mount,7:Top hinge,8:Side hinge,9:Platform,10:Base,11:Plate A,12:Plate B,13:Plate C,14:Plate D,15:Plate E,16:Plate F,17:Plate G]
+part=0; // [0:Instructions,1:Front/back panels,2:Side,3:Connectors,4:Gear rack,5:Hinged lids,6:Hinge mount,7:Top hinge,8:Side hinge,9:Platform,10:Base,11:Plate A,12:Plate B,13:Plate C,14:Plate D,15:Plate E,16:Plate F,17:Plate G]
 
 // Width of the card-storage area - should be the width of one of your cards
 card_x = 70;
 
 // Depth of the card-storage area - should be the thickness of the entire stack of cards. For example, 60 sleeved cards are about 40mm.
-card_y = 75;
+card_y = 110;
 
 // Height of the card-storage area - should the height of one of your cards.
 card_z = 100;
@@ -39,10 +39,10 @@ build_plate_manual_y = 180; //[100:400]
 
 /* [Hidden] */
 // Specify a logo to stamp into the left side panel
-left_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+left_logo = "manawhite"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
 
 // Specify a logo to stamp into the right side panel
-right_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
+right_logo = "manablue"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
 
 // Specify a logo to stamp into the front panel
 front_logo = "none"; // [none:No Logo,manablue:Blue Mana,manared:Red Mana,manablack:Black Mana,manawhite:White Mana,managreen:Green Mana]
