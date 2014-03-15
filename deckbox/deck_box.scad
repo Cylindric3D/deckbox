@@ -272,21 +272,52 @@ module top_half()
 			}
 		}
 
-		difference()
+		// These pegs will join the top together
+		translate ([wall, rad*2+card_clearance+wall-wall-keyThickness/2, wall-j]) 
+		hull()
 		{
-			translate ([0, rad*2+card_clearance+wall-wall*2, 0]) 
-			cube(size = [notchHeight, wall*2, oy]);
-			translate ([wall, rad*2+card_clearance+wall-wall-keyThickness/2, wall]) 
-			cube(size = [notchHeight-wall*2, keyThickness, oy-wall+j]);
+			cube([notchHeight-wall*2, keyThickness, j]);
+
+			translate ([0,  0, wall])
+			cube([notchHeight-wall*2, keyThickness, j]);
+
+			translate ([0.5,  0.5, wall*4])
+			cube([notchHeight-wall*2-1, keyThickness-1, j]);
 		}
-		
-		//  key system to hold the two parts of the top together
-		translate ([notchHeight, rad*2+card_clearance+wall, 0]) 
-		scale([1, -1, 1])
-		hinge(hingeRad, hingeHole, oy-card_y/6-printing_tolerance);
+
 	}
 }
 
+
+module lid_connector_half()
+{
+	//translate([0, rad*2+card_clearance, 0])
+	union()
+	{
+		translate([0, 0, 0])
+		difference()
+		{
+			translate ([0, -wall, 0]) cube([notchHeight, wall*2, oy+j]);
+			translate ([wall, -keyThickness/2, -j]) cube([notchHeight-wall*2, keyThickness, wall*5]);
+		}
+		
+		//  key system to hold the two parts of the top together
+		translate ([notchHeight, wall, 0]) 
+		scale([1, -1, 1])
+		hinge(hingeRad, hingeHole, oy-card_y/6-printing_tolerance);
+	}
+
+}
+
+
+module lid_connector()
+{
+	union()
+	{
+		lid_connector_half();
+		translate([0, 0, oy*2]) scale([1, 1, -1]) lid_connector_half();
+	}
+}
 
 //CSG Checked
 module lid_half()
@@ -435,13 +466,6 @@ module rack_lift_platform()
 	}
 }
 
-
-module topLayout2()
-{
-	translate([printingGap/2, printingGap/2, 0]) top_half();
-	translate([-printingGap/2, printingGap/2, 0]) scale([-1, 1, 1])	top_half();
-}
-
 module lid()
 {
 	union()
@@ -576,62 +600,86 @@ if(part==4)
 }
 if(part==5)
 {
-	topLayout2();
+	translate([printingGap/2, -(rad+card_clearance+wall), 0]) top_half();
+	translate([-printingGap/2, -(rad+card_clearance+wall), 0]) scale([-1, 1, 1])	top_half();
 }
 if(part==6)
 {
-	mechanism();
+	translate([oy, printingGap/2, wall])
+	rotate([-90, 0, 90])
+	lid_connector();
 }
 if(part==7)
 {
-	lid();
+	mechanism();
 }
 if(part==8)
 {
-	top_side();
+	lid();
 }
 if(part==9)
 {
-	rack_lift_platform();
+	top_side();
 }
 if(part==10)
 {
+	rack_lift_platform();
+}
+if(part==11)
+{
 	base();
 }
-if(part==11) // PLATE-A is just the base
+if(part==12) // PLATE-A is just the base
 {
 	translate([0, -oy, 0]) base();
 }
-if(part==12) // PLATE-B is the four corners and their joiner
+if(part==13) // PLATE-B is the four corners and their joiners
 {
-	translate([0, (rad+card_clearance+wall+rad+wall), 0]) rotate([0, 0, 180]) topLayout2();
-	translate([0, -(rad+card_clearance+wall+rad+wall), 0]) topLayout2();
+	translate([0, (rad*2+card_clearance+wall)+printingGap/2, 0]) rotate([0, 0, 180])
+	{
+		translate([printingGap/2, 0, 0]) top_half();
+		translate([-printingGap/2, 0, 0]) scale([-1, 1, 1])	top_half();
+	}
+	translate([0, -(rad*2+card_clearance+wall)-printingGap/2, 0]) 
+{
+		translate([printingGap/2, 0, 0]) top_half();
+		translate([-printingGap/2, 0, 0]) scale([-1, 1, 1])	top_half();
+	}
 	translate([0, (rad+card_clearance+wall+rad), 0]) rotate([0, 0, 90]) top_key();
 	translate([0, -(rad+card_clearance+wall+rad), 0]) rotate([0, 0, 90]) top_key();
+
+	translate([ox+printingGap*2, -oy, wall])
+	rotate([-90, 0, 0])
+	lid_connector();
+
+	translate([-ox-printingGap*2, -oy, wall])
+	scale([1, -1, 1])
+	rotate([-90, 0, 180])
+	lid_connector();
 }
-if(part==13) // PLATE-C is the two outer cutout panels and rack lifts
+if(part==14) // PLATE-C is the two outer cutout panels and rack lifts
 {
 	translate([0, wall/2, 0]) frontAndBack(front_logo);
 	rotate([0, 0, 180]) translate([0, wall/2, 0]) frontAndBack(back_logo);
 	translate([ox+12+wall, -50, 0]) rack_lift();
 	translate([-(ox+12+wall), -50, 0]) rack_lift();
 }
-if(part==14) // PLATE-D is the lower hinge panels
+if(part==15) // PLATE-D is the lower hinge panels
 {
 	translate([0, wall/2, 0]) side(left_logo);
 	rotate([0, 0, 180]) translate([0, wall/2, 0]) side(right_logo);
 }
-if(part==15) // PLATE-E is the large mechanism-holding plates
+if(part==16) // PLATE-E is the large mechanism-holding plates
 {
 	translate([ox+wall/2, -ch/2, 0]) mechanism();
 	translate([-ox-wall/2, -ch/2, 0]) mechanism();
 }
-if(part==16) // PLATE-F is the upper hinged panels
+if(part==17) // PLATE-F is the upper hinged panels
 {
 	translate([0, -(rad*2-4*hingeRad+card_clearance+wall)-hingeRad*4-wall/2, 0]) top_side();
 	translate([0, (rad*2-4*hingeRad+card_clearance+wall)+hingeRad*4+wall/2, 0]) rotate([0, 0, 180]) top_side();
 }
-if(part==17) // PLATE-G is the lift platform
+if(part==18) // PLATE-G is the lift platform
 {
 	translate([0, -(card_y+(wall+mechanism-printing_tolerance)*2)/2, 0]) rack_lift_platform();
 }
