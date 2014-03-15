@@ -156,7 +156,6 @@ module face_half()
 }
 
 
-//CSG Checked
 module rack_lift_half()
 {
 	union()
@@ -176,7 +175,6 @@ module rack_lift_half()
 }
 
 
-//CSG Checked
 module rack_lift_platform_half()
 {
 	union()
@@ -192,7 +190,6 @@ module rack_lift_platform_half()
 }
 
 
-//CSG Checked
 module mechanism_half()
 {
 	difference()
@@ -212,7 +209,6 @@ module mechanism_half()
 }
 
 
-//CSG Checked
 module hinge(r, hole, length)
 {
 	difference()
@@ -227,7 +223,6 @@ module hinge(r, hole, length)
 }
 
 
-//CSG Checked
 module side_half()
 {
 	difference()
@@ -291,20 +286,19 @@ module top_half()
 
 module lid_connector_half()
 {
-	//translate([0, rad*2+card_clearance, 0])
 	union()
 	{
-		translate([0, 0, 0])
+		translate([0, 0, wall])
 		difference()
 		{
-			translate ([0, -wall, 0]) cube([notchHeight, wall*2, oy+j]);
+			translate ([0, -wall, 0]) cube([notchHeight, wall*2, oy-wall+j]);
 			translate ([wall, -keyThickness/2, -j]) cube([notchHeight-wall*2, keyThickness, wall*5]);
 		}
 		
 		//  key system to hold the two parts of the top together
-		translate ([notchHeight, wall, 0]) 
+		translate ([notchHeight, wall, wall]) 
 		scale([1, -1, 1])
-		hinge(hingeRad, hingeHole, oy-card_y/6-printing_tolerance);
+		hinge(hingeRad, hingeHole, oy-card_y/6-printing_tolerance-wall);
 	}
 
 }
@@ -312,6 +306,7 @@ module lid_connector_half()
 
 module lid_connector()
 {
+	rotate([-90, 0, 90])
 	union()
 	{
 		lid_connector_half();
@@ -319,7 +314,7 @@ module lid_connector()
 	}
 }
 
-//CSG Checked
+
 module lid_half()
 {
 	union()
@@ -340,7 +335,6 @@ module lid_half()
 }
 
 
-//CSG Checked
 module top_side_half()
 {
 	union()
@@ -357,24 +351,6 @@ module top_side_half()
 		scale([-1, -1, 1])
 		rotate(a=[90, 0, -90])
 		hinge(hingeRad, hingeHole, card_y/3-printing_tolerance);
-	}
-}
-
-
-//CSG Checked
-module top_key()
-{
-	width=notchHeight-wall*2-printing_tolerance;
-	thickness=keyThickness-printing_tolerance;
-	length=min(oy-wall, 20);
-	
-	translate([0, -length/2, 0])
-	hull()
-	{
-		cube([width*0.9, j, thickness*0.9], center=true);
-		translate([0, length*0.3, 0]) cube([width, j, thickness], center=true);
-		translate([0, length*0.6, 0]) cube([width, j, thickness], center=true);
-		translate([0, length, 0]) cube([width*0.9, j, thickness*0.9], center=true);
 	}
 }
 
@@ -592,7 +568,6 @@ if(part==2)
 }
 if(part==3)
 {
-	top_key();
 }
 if(part==4)
 {
@@ -606,7 +581,6 @@ if(part==5)
 if(part==6)
 {
 	translate([oy, printingGap/2, wall])
-	rotate([-90, 0, 90])
 	lid_connector();
 }
 if(part==7)
@@ -645,16 +619,14 @@ if(part==13) // PLATE-B is the four corners and their joiners
 		translate([printingGap/2, 0, 0]) top_half();
 		translate([-printingGap/2, 0, 0]) scale([-1, 1, 1])	top_half();
 	}
-	translate([0, (rad+card_clearance+wall+rad), 0]) rotate([0, 0, 90]) top_key();
-	translate([0, -(rad+card_clearance+wall+rad), 0]) rotate([0, 0, 90]) top_key();
 
 	translate([ox+printingGap*2, -oy, wall])
-	rotate([-90, 0, 0])
+	rotate([0, 0, -90])
 	lid_connector();
 
 	translate([-ox-printingGap*2, -oy, wall])
 	scale([1, -1, 1])
-	rotate([-90, 0, 180])
+	rotate([0, 0, 90])
 	lid_connector();
 }
 if(part==14) // PLATE-C is the two outer cutout panels and rack lifts
@@ -758,19 +730,19 @@ module assembledLayout()
 	rotate(a=[0, 180, -90])
 	lid();
 	
-	// connectors
-	translate([notchHeight+explode-6, 0, oz+wall+2+explode])
-	translate([-(notchHeight-wall*2-printing_tolerance)/2, 0, 0])
-	top_key();
-
-	translate([-notchHeight-explode+6, 0, oz+wall+2+explode])
-	translate([-(notchHeight-wall*2-printing_tolerance)/2, 0, 0])
-	top_key();
-
+	translate([-j-explode*0.5, -oy, oz+card_clearance+explode])
+	rotate([180, 0, -90])
+	lid_connector();
+	
 	translate([-notchHeight-explode, 0, oz+card_clearance+wall+explode])
 	rotate(a=[0, 180, 90])
 	lid();
-	
+
+	rotate([0, 0, 180])
+	translate([-j-explode*0.5, -oy, oz+card_clearance+explode])
+	rotate([180,0,-90])
+	lid_connector();
+
 	// top side
 	translate([-ox-hingeRad*2+wall-explode, 0, oz+card_clearance+wall+explode/2])
 	rotate(a=[90, 180, 90])
