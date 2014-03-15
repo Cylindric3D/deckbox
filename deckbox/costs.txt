@@ -1,0 +1,22 @@
+TO GENERATE
+===========
+[none]
+
+
+TO SLICE
+========
+Plate B
+
+
+TO PRINT
+========
+Plate C ; filament used = 4005.9mm (26.5cm3)
+Plate D ; filament used = 4536.2mm (30.0cm3)
+Plate E ; filament used = 3337.3mm (22.0cm3)
+Plate F ; filament used = 3727.0mm (24.6cm3)
+Plate G ; filament used = 4536.2mm (30.0cm3)
+
+
+PRINTED
+=======
+Plate A ; filament used = 2285.1mm (15.1cm3)
