@@ -404,7 +404,6 @@ module mechanism()
 
 module side(logoname)
 {
-	color("red")
 	difference()
 	{
 		union()
@@ -466,7 +465,6 @@ module Logo(logoname)
 	{
 		union()
 		{
-			//color("green")translate([0,0,-1])cylinder(r=0.5, h=1, $fn=circle_resolution);cylinder(r=0.1, h=1, $fn=circle_resolution);
 			if(logoname == "manablue") manaLogo("blue");
 			if(logoname == "manawhite") manaLogo("white");
 			if(logoname == "manared") manaLogo("red");
@@ -601,11 +599,13 @@ if(part==10)
 }
 if(part==11)
 {
+	translate([0, -oy, 0])
 	base();
 }
 if(part==12) // PLATE-A is just the base
 {
-	translate([0, -oy, 0]) base();
+	translate([0, -oy, 0])
+	base();
 }
 if(part==13) // PLATE-B is the four corners and their joiners
 {
