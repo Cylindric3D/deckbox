@@ -6,7 +6,7 @@
 /* [Basic Settings] */
 
 // Which part do you want to render?
-part=0; // [0:Instructions,1:Front/back panels,2:Side,3:Gear rack,4:Hinged lid left,5:Hinged lid right,6:Hinge mount,7:Mechanism holder8:Top hinge,9:Side hinge,10:Platform,11:Base,12:Plate A,13:Plate B,14:Plate C,15:Plate D,16:Plate E,17:Plate F,18:Plate G]
+part=0; // [0:Instructions,1:Front,2:Back,3:Left,4:Right,5:Gear rack,6:Hinged lid left,7:Hinged lid right,8:Hinge mount,9:Mechanism holder,10:Top hinge,11:Side hinge,12:Platform,13:Base,14:Plate A,15:Plate B,16:Plate C,17:Plate D,18:Plate E,19:Plate F,20:Plate G]
 
 // Width of the card-storage area - should be the width of one of your cards
 card_x = 70;
@@ -86,48 +86,45 @@ j=0.1;
 use<utils/build_plate.scad>;
 
 
-///////////////////////////////////////////////////////////////////
-// Everything is built in quarters
-
-
 module notches()
 {
 	// Cut notch for side
 	translate ([ox-wall, notchHeight/2-printing_tolerance, -j]) 	
-		cube(size = [50, notchHeight+printing_tolerance*2, wall+j*2]);
+	cube(size = [50, notchHeight+printing_tolerance*2, wall+j*2]);
+	
 	translate ([ox-wall, notchHeight*2-printing_tolerance, -j]) 	
-		cube(size = [50, notchHeight+printing_tolerance*2, wall+j*2]);
+	cube(size = [50, notchHeight+printing_tolerance*2, wall+j*2]);
+	
 	// Cut notch for bottom
 	translate ([ox-notchHeight*3/2-printing_tolerance, -j, -j]) 	
-		cube(size = [notchHeight+printing_tolerance*2, wall+printing_tolerance+j, wall+j*2]);
+	cube(size = [notchHeight+printing_tolerance*2, wall+printing_tolerance+j, wall+j*2]);
 }
+
 
 module base_quarter()
 {
-
 	difference()
 	{
 		cube([ox-wall-printing_tolerance*2, oy, wall]);
 
 		// edge notches
 		translate ([-j, -printing_tolerance, -j])
-			cube([ox-notchHeight*3/2+printing_tolerance+j, wall+printing_tolerance, wall+j*2]);
+		cube([ox-notchHeight*3/2+printing_tolerance+j, wall+printing_tolerance, wall+j*2]);
+		
 		translate ([ox-notchHeight/2+printing_tolerance*2, -printing_tolerance, -j])
-			cube([notchHeight, wall+printing_tolerance*2, 100]);
+		cube([notchHeight, wall+printing_tolerance*2, 100]);
 
 		// notches for the inner supports
 		translate([0, wall+mechanism, 0])
 		{
 			translate ([slidewidth+printing_tolerance, -printing_tolerance, -j])
-				cube([ox-notchHeight*3/2-slidewidth, wall+printing_tolerance, wall+j*2]);
+			cube([ox-notchHeight*3/2-slidewidth, wall+printing_tolerance, wall+j*2]);
 			translate ([ox-notchHeight/2+printing_tolerance*2, -printing_tolerance, -j])
-				cube([notchHeight, wall+printing_tolerance*2, 100]);
+			cube([notchHeight, wall+printing_tolerance*2, 100]);
 		}
-
-
-
 	}
 }
+
 
 module sideTab()
 {
@@ -236,8 +233,8 @@ module side_half()
 
 module top_half()
 {
- //The height is incorrect. It's calculated using oz which already includes card_clearance + wall.
- // Careful changes need to be made to fix it though.
+	//The height is incorrect. It's calculated using oz which already includes card_clearance + wall.
+	// Careful changes need to be made to fix it though.
 
 	union()
 	{
@@ -355,10 +352,6 @@ module top_side_half()
 }
 
 
-/////////////////////////////////////////////////////////////////////////
-// Quarters are doubled
-
-
 module base_half()
 {
 	union()
@@ -441,6 +434,7 @@ module rack_lift_platform()
 	}
 }
 
+
 module lid()
 {
 	union()
@@ -450,6 +444,7 @@ module lid()
 	}
 }
 
+
 module top_side()
 {
 	top_side_half();
@@ -457,8 +452,7 @@ module top_side()
 		top_side_half();
 }
 
-/////////////////////////////////////////////////////////////////////////
-// Logos
+
 module Logo(logoname)
 {
 	union()
@@ -473,6 +467,7 @@ module Logo(logoname)
 		}
 	}
 }
+
 
 // Magic the Gathering Mana badges by Stuartblarg
 // It is licensed under the Creative Commons - Attribution license.
@@ -495,6 +490,7 @@ module manaLogo(logoname)
 	}
 }
 
+
 module manaLogoBlue()
 {
 	union()
@@ -504,6 +500,7 @@ module manaLogoBlue()
 		import("blue.stl");
 	}
 }
+
 
 module manaLogoWhite()
 {
@@ -515,6 +512,7 @@ module manaLogoWhite()
 	}
 }
 
+
 module manaLogoRed()
 {
 	union()
@@ -525,6 +523,7 @@ module manaLogoRed()
 	}
 }
 
+
 module manaLogoBlack()
 {
 	union()
@@ -534,6 +533,7 @@ module manaLogoBlack()
 		import("black.stl");
 	}
 }
+
 
 module manaLogoGreen()
 {
@@ -550,12 +550,11 @@ module manaLogoGreen()
 
 /////////////////////////////////////////////////////////////////////////
 // Layouts
+/////////////////////////////////////////////////////////////////////////
 if(part==0)
 {
-	// Complete render with parts moved into position (possibly with parts exploded as per "explode" value above
 	assembledLayout();
 }
-
 if(part==1)
 {
 	translate([0, -(ch-chx)*0.5, 0])
@@ -564,56 +563,66 @@ if(part==1)
 if(part==2)
 {
 	translate([0, -(ch-chx)*0.5, 0])
-	side(left_logo);
+	frontAndBack(back_logo);
 }
 if(part==3)
+{
+	translate([0, -(ch-chx)*0.5, 0])
+	side(left_logo);
+}
+if(part==4)
+{
+	translate([0, -(ch-chx)*0.5, 0])
+	side(right_logo);
+}
+if(part==5)
 {
 	translate([0, -(37.7), 0])
 	rack_lift();
 }
-if(part==4)
+if(part==6)
 {
 	translate([-ox/2, -(rad+card_clearance+wall), 0]) top_half();
 }
-if(part==5)
+if(part==7)
 {
 	translate([ox/2, -(rad+card_clearance+wall), 0]) scale([-1, 1, 1])	top_half();
 }
-if(part==6)
+if(part==8)
 {
 	translate([oy, printingGap/2, wall])
 	lid_connector();
 }
-if(part==7)
+if(part==9)
 {
 	translate([0, -ch/2, 0])
 	mechanism();
 }
-if(part==8)
+if(part==10)
 {
 	lid();
 }
-if(part==9)
+if(part==11)
 {
 	translate([0, -(rad*2-4*hingeRad+card_clearance+wall)/2, 0])
 	top_side();
 }
-if(part==10)
+if(part==12)
 {
 	translate([0, -(card_y+(wall+mechanism-printing_tolerance))/2, 0])
 	rack_lift_platform();
 }
-if(part==11)
+if(part==13)
 {
 	translate([0, -oy, 0])
 	base();
 }
-if(part==12) // PLATE-A is just the base
+if(part==14) // PLATE-A is just the base
 {
 	translate([0, -oy, 0])
 	base();
 }
-if(part==13) // PLATE-B is the four corners and their joiners
+if(part==15) // PLATE-B is the four corners and their joiners
 {
 	translate([0, (rad*2+card_clearance+wall)+printingGap/2, 0]) rotate([0, 0, 180])
 	{
@@ -635,32 +644,33 @@ if(part==13) // PLATE-B is the four corners and their joiners
 	rotate([0, 0, 90])
 	lid_connector();
 }
-if(part==14) // PLATE-C is the two outer cutout panels and rack lifts
+if(part==16) // PLATE-C is the two outer cutout panels and rack lifts
 {
 	translate([0, wall/2, 0]) frontAndBack(front_logo);
 	rotate([0, 0, 180]) translate([0, wall/2, 0]) frontAndBack(back_logo);
 	translate([ox+12+wall, -50, 0]) rack_lift();
 	translate([-(ox+12+wall), -50, 0]) rack_lift();
 }
-if(part==15) // PLATE-D is the lower hinge panels
+if(part==17) // PLATE-D is the lower hinge panels
 {
 	translate([0, wall/2, 0]) side(left_logo);
 	rotate([0, 0, 180]) translate([0, wall/2, 0]) side(right_logo);
 }
-if(part==16) // PLATE-E is the large mechanism-holding plates
+if(part==18) // PLATE-E is the large mechanism-holding plates
 {
 	translate([ox+wall/2, -ch/2, 0]) mechanism();
 	translate([-ox-wall/2, -ch/2, 0]) mechanism();
 }
-if(part==17) // PLATE-F is the upper hinged panels
+if(part==19) // PLATE-F is the upper hinged panels
 {
 	translate([0, -(rad*2-4*hingeRad+card_clearance+wall)-hingeRad*4-wall/2, 0]) top_side();
 	translate([0, (rad*2-4*hingeRad+card_clearance+wall)+hingeRad*4+wall/2, 0]) rotate([0, 0, 180]) top_side();
 }
-if(part==18) // PLATE-G is the lift platform
+if(part==20) // PLATE-G is the lift platform
 {
 	translate([0, -(card_y+(wall+mechanism-printing_tolerance)*2)/2, 0]) rack_lift_platform();
 }
+
 
 module assembledLayout()
 {
