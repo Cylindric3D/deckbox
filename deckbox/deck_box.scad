@@ -6,7 +6,7 @@
 /* [Basic Settings] */
 
 // Which part do you want to render?
-part=0; // [0:Instructions,1:Front/back panels,2:Side,3:Connectors,4:Gear rack,5:Hinged lids,6:Hinge mount,7:Top hinge,8:Side hinge,9:Platform,10:Base,11:Plate A,12:Plate B,13:Plate C,14:Plate D,15:Plate E,16:Plate F,17:Plate G]
+part=0; // [0:Instructions,1:Front/back panels,2:Side,3:Gear rack,4:Hinged lid left,5:Hinged lid right,6:Hinge mount,7:Mechanism holder8:Top hinge,9:Side hinge,10:Platform,11:Base,12:Plate A,13:Plate B,14:Plate C,15:Plate D,16:Plate E,17:Plate F,18:Plate G]
 
 // Width of the card-storage area - should be the width of one of your cards
 card_x = 70;
@@ -558,23 +558,26 @@ if(part==0)
 
 if(part==1)
 {
+	translate([0, -(ch-chx)*0.5, 0])
 	frontAndBack(front_logo);
 }
 if(part==2)
 {
+	translate([0, -(ch-chx)*0.5, 0])
 	side(left_logo);
 }
 if(part==3)
 {
+	translate([0, -(37.7), 0])
+	rack_lift();
 }
 if(part==4)
 {
-	rack_lift();
+	translate([-ox/2, -(rad+card_clearance+wall), 0]) top_half();
 }
 if(part==5)
 {
-	translate([printingGap/2, -(rad+card_clearance+wall), 0]) top_half();
-	translate([-printingGap/2, -(rad+card_clearance+wall), 0]) scale([-1, 1, 1])	top_half();
+	translate([ox/2, -(rad+card_clearance+wall), 0]) scale([-1, 1, 1])	top_half();
 }
 if(part==6)
 {
@@ -583,6 +586,7 @@ if(part==6)
 }
 if(part==7)
 {
+	translate([0, -ch/2, 0])
 	mechanism();
 }
 if(part==8)
@@ -591,10 +595,12 @@ if(part==8)
 }
 if(part==9)
 {
+	translate([0, -(rad*2-4*hingeRad+card_clearance+wall)/2, 0])
 	top_side();
 }
 if(part==10)
 {
+	translate([0, -(card_y+(wall+mechanism-printing_tolerance))/2, 0])
 	rack_lift_platform();
 }
 if(part==11)

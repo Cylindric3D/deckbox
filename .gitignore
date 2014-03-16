@@ -1,2 +1,3 @@
 *.gcode
 !deckbox/gcode/*.gcode
+deckbox/slic3r.ini
