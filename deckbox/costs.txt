@@ -1,4 +1,4 @@
-PLA is approximately 1.25g/cm³
+PLA is approximately 1.25g/cm³ and £20/kg
 
 TO GENERATE
 ===========
@@ -11,14 +11,14 @@ TO SLICE
 
 TO PRINT
 ========
-Plate C ; filament used = 5732.5mm (37.9cm3); £0.95
-Plate D ; filament used = 4536.2mm (30.0cm3); £0.75
-Plate E ; filament used = 3337.3mm (22.0cm3); £0.55
-Plate F ; filament used = 3727.0mm (24.6cm3); £0.62
+Plate D ; filament used = 4536.2mm (30.0cm3) ; £0.75
+Plate E ; filament used = 3337.3mm (22.0cm3) ; £0.55
+Plate F ; filament used = 3727.0mm (24.6cm3) ; £0.62
 
 
 PRINTED
 =======
-Plate A ; filament used = 2285.1mm (15.1cm3) took 1:30; £0.38
-Plate B ; filament used = 6336.7mm (41.9cm3) took 4:44; £1.05
-Plate G ; filament used = 2055.8mm (13.6cm3) took 1:30; £0.34
+Plate A ; filament used = 2285.1mm (15.1cm3) ; took 1:30 ; £0.38
+Plate B ; filament used = 6336.7mm (41.9cm3) ; took 4:44 ; £1.05
+Plate C ; filament used = 5732.5mm (37.9cm3) ; took 3:01 ; £0.95
+Plate G ; filament used = 2055.8mm (13.6cm3) ; took 1:30 ; £0.34
