@@ -266,16 +266,7 @@ module top_half()
 
 		// These pegs will join the top together
 		translate ([wall, rad*2+card_clearance+wall-wall-keyThickness/2, wall-j]) 
-		hull()
-		{
-			cube([notchHeight-wall*2, keyThickness, j]);
-
-			translate ([0,  0, wall])
-			cube([notchHeight-wall*2, keyThickness, j]);
-
-			translate ([0.5,  0.5, wall*4])
-			cube([notchHeight-wall*2-1, keyThickness-1, j]);
-		}
+		cube([notchHeight-wall*2, keyThickness, wall*4]);
 
 	}
 }
@@ -289,7 +280,7 @@ module lid_connector_half()
 		difference()
 		{
 			translate ([0, -wall, 0]) cube([notchHeight, wall*2, oy-wall+j]);
-			translate ([wall, -keyThickness/2, -j]) cube([notchHeight-wall*2, keyThickness, wall*5]);
+			translate ([wall*0.5, -keyThickness/1.5, -j]) cube([notchHeight-wall,  wall*2-keyThickness, wall*10]);
 		}
 		
 		//  key system to hold the two parts of the top together
