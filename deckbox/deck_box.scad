@@ -665,6 +665,8 @@ if(part==19) // PLATE-F is the upper hinged panels
 {
 	translate([0, -(rad*2-4*hingeRad+card_clearance+wall)-hingeRad*4-wall/2, 0]) top_side();
 	translate([0, (rad*2-4*hingeRad+card_clearance+wall)+hingeRad*4+wall/2, 0]) rotate([0, 0, 180]) top_side();
+	translate([-(card_y/2+printingGap), 0, 0]) rotate([0, 0, 90]) lid();
+	translate([card_y/2+printingGap, 0, 0]) rotate([0, 0, -90]) lid();
 }
 if(part==20) // PLATE-G is the lift platform
 {
