@@ -712,24 +712,24 @@ module assembledLayout()
 
 	// top
 	color("DarkMagenta")
-	translate([0+explode, -oy-explode, ch-rad+explode])
+	translate([0.5*explode, -oy-explode, ch-rad+explode])
 	rotate(a=[90, 0, 180])
 	scale([-1, 1, 1])
 	top_half();
 
 	color("DarkMagenta")
-	translate([0-explode, -oy-explode, ch-rad+explode])
+	translate([-0.5*explode, -oy-explode, ch-rad+explode])
 	rotate(a=[90, 0, 180])
 	top_half();
 
 	color("DarkMagenta")
-	translate([0-explode, oy+explode, ch-rad+explode])
+	translate([-0.5*explode, oy+explode, ch-rad+explode])
 	rotate(a=[90, 0, 0])
 	scale([-1, 1, 1])
 	top_half();
 
 	color("DarkMagenta")
-	translate([0+explode, oy+explode, ch-rad+explode])
+	translate([0.5*explode, oy+explode, ch-rad+explode])
 	rotate(a=[90, 0, 0])
 	top_half();
 
