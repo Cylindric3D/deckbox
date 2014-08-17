@@ -6,7 +6,7 @@
 /* [Basic Settings] */
 
 // Which part do you want to render?
-part=0; // [0:Instructions,1:Front,2:Back,3:Left,4:Right,5:Gear rack,6:Hinged lid left,7:Hinged lid right,8:Hinge mount,9:Mechanism holder,10:Top hinge,11:Side hinge,12:Platform,13:Base,14:Plate A,15:Plate B,16:Plate C,17:Plate D,18:Plate E,19:Plate F,20:Plate G]
+part=0; // [0:Instructions,1:Front,2:Back,3:Left,4:Right,5:Gear rack,6:Hinged lid left,7:Hinged lid right,8:Hinge mount,9:Mechanism holder,10:Top hinge,11:Side hinge,12:Platform,13:Tray,14:Base,15:Plate A,16:Plate B,17:Plate C,18:Plate D,19:Plate E,20:Plate F,21:Plate G]
 
 // Width of the card-storage area - should be the width of one of your cards
 card_x = 70;
@@ -17,9 +17,17 @@ card_y = 75;
 // Height of the card-storage area - should the height of one of your cards.
 card_z = 100;
 
+/* [Tray Insert] */
+
+// Length of the tray
+tray_y = 50;
+
+// Depth of the tray
+tray_z = 20;
+
 /* [Advanced Settings] */
 // When rendering the AssembledLayout, explode parts by this amount. set to zero for normal assembly
-explode = 0;
+explode = 0; // [0:100]
 
 // Cylinder resolution. set it to 10 if you're mucking about, about 120 if you're exporting STL's
 circle_resolution = 120;
@@ -72,16 +80,21 @@ chx = 13; // this is the distance below the centre of the axes that the base is 
 pivotrad = 5;
 pivotheight = 3;
 
-// Better not to touch these
-ox = card_x /2 + wall;
-oy = card_y /2 + mechanism + 2 * wall;
-oz = card_z + card_clearance + wall*2;
-ch = oz-rad; // height of the centre point of the axes that the lid rotates off
-gearHeight = wall+ mechanism-printing_tolerance;
-
 // Jitter is used to prevent coincident-surface problems with CSG. Should be set to something small.
 j=0.1;
 
+// Shortcuts used to make arrays easier to reference
+x=0; y=1; z=2;
+
+// The final cavity size, based on card size and tray size
+cavity = [card_x, card_y + tray_y, card_z];
+
+// Better not to touch these
+ox = cavity[x] /2 + wall;
+oy = cavity[y] /2 + mechanism + 2 * wall;
+oz = cavity[z] + card_clearance + wall*2;
+ch = oz-rad; // height of the centre point of the axes that the lid rotates off
+gearHeight = wall+ mechanism-printing_tolerance;
 
 use<utils/build_plate.scad>;
 
@@ -174,14 +187,27 @@ module rack_lift_half()
 
 module rack_lift_platform_half()
 {
+	tray_mount_hole = 2;
+	
 	union()
 	{
-		cube([slidewidth-wall-printing_tolerance, card_y+(wall+mechanism-printing_tolerance)*2, wall-printing_tolerance*2]);
+		cube([slidewidth-wall-printing_tolerance, cavity[y]+(wall+mechanism-printing_tolerance)*2, wall-printing_tolerance*2]);
 
 		translate([0, wall+mechanism+printing_tolerance*3, 0])
 		{
-			cube([card_x/2-printing_tolerance*4, card_y-printing_tolerance*6, wall-printing_tolerance*2]);
-			cube([slidewidth-wall-printing_tolerance, card_y-printing_tolerance*6, 2*wall-printing_tolerance*2]);
+			difference()
+			{
+				// Base plate
+				cube([cavity[x]/2-printing_tolerance*4, cavity[y]-printing_tolerance*6, wall-printing_tolerance*2]);
+				
+				if(tray_y > 0)
+				{	
+					// Tray mounting holes
+					translate([cavity[x]/2-printing_tolerance*4-tray_mount_hole-1, tray_mount_hole+1, -j]) cylinder(r=tray_mount_hole, h=wall, $fn=circle_resolution);
+					translate([cavity[x]/2-printing_tolerance*4-tray_mount_hole-1, tray_y-tray_mount_hole-1, -j]) cylinder(r=tray_mount_hole, h=wall, $fn=circle_resolution);
+				}
+			}
+			cube([slidewidth-wall-printing_tolerance, cavity[y]-printing_tolerance*6, 2*wall-printing_tolerance*2]);
 		}
 	}
 }
@@ -196,7 +222,7 @@ module mechanism_half()
 			cube(size = [ox, ch, wall]);
 			translate ([rad, ch, 0])
 			{
-				cylinder(h=wall, r=card_x/2-rad, $fn=circle_resolution);
+				cylinder(h=wall, r=cavity[x]/2-rad, $fn=circle_resolution);
 				cylinder(h=wall+pivotheight-printing_tolerance, r=pivotrad, $fn=circle_resolution);
 			}
 		}
@@ -226,7 +252,7 @@ module side_half()
 	{
 		cube(size = [oy, ch-rad, wall]);
 		translate([oy-wall, 0, 0]) sideTab();
-		translate([card_y/2, 0, 0]) sideTab();
+		translate([cavity[y]/2, 0, 0]) sideTab();
 	}
 }
 
@@ -254,7 +280,7 @@ module top_half()
 				union()
 				{
 					gear (circular_pitch=360, gear_thickness = gearHeight, rim_thickness = gearHeight, hub_thickness = gearHeight, circles=4);
-					cylinder(h=gearHeight, r=card_x/2-rad, $fn=circle_resolution);
+					cylinder(h=gearHeight, r=cavity[x]/2-rad, $fn=circle_resolution);
 					translate([pivotrad+printing_tolerance*2, -pivotrad, 0])
 					cube([ox-rad-(pivotrad+printing_tolerance*2), pivotrad*2, gearHeight]);
 				}
@@ -286,7 +312,7 @@ module lid_connector_half()
 		//  key system to hold the two parts of the top together
 		translate ([notchHeight, wall, wall]) 
 		scale([1, -1, 1])
-		hinge(hingeRad, hingeHole, oy-card_y/6-printing_tolerance-wall);
+		hinge(hingeRad, hingeHole, oy-cavity[y]/6-printing_tolerance-wall);
 	}
 
 }
@@ -313,12 +339,12 @@ module lid_half()
 		translate ([-j, hingeRad*2, 0]) 
 		scale([1, -1, 1])
 		rotate(a=[90, 0, 90])
-		hinge(hingeRad, hingeHole, card_y/6-printing_tolerance+j);
+		hinge(hingeRad, hingeHole, cavity[y]/6-printing_tolerance+j);
 
-		translate ([card_y/6, ox-notchHeight-wall, 0]) 
+		translate ([cavity[y]/6, ox-notchHeight-wall, 0]) 
 		scale([-1, -1, 1])
 		rotate(a=[90, 0, -90])
-		hinge(hingeRad, hingeHole, card_y/3-printing_tolerance);
+		hinge(hingeRad, hingeHole, cavity[y]/3-printing_tolerance);
 	}
 }
 
@@ -328,17 +354,17 @@ module top_side_half()
 	union()
 	{
 		translate([0, hingeRad*2-j, 0])
-		cube([card_y/2-printing_tolerance, rad*2-4*hingeRad+card_clearance+wall+j*2, wall]);
+		cube([cavity[y]/2-printing_tolerance, rad*2-4*hingeRad+card_clearance+wall+j*2, wall]);
 
 		translate ([0, hingeRad*2, 0]) 
 		scale([1, -1, 1])
 		rotate(a=[90, 0, 90])
-		hinge(hingeRad, hingeHole, card_y/6-printing_tolerance);
+		hinge(hingeRad, hingeHole, cavity[y]/6-printing_tolerance);
 
-		translate ([card_y/6, rad*2-2*hingeRad+card_clearance+wall, 0]) 
+		translate ([cavity[y]/6, rad*2-2*hingeRad+card_clearance+wall, 0]) 
 		scale([-1, -1, 1])
 		rotate(a=[90, 0, -90])
-		hinge(hingeRad, hingeHole, card_y/3-printing_tolerance);
+		hinge(hingeRad, hingeHole, cavity[y]/3-printing_tolerance);
 	}
 }
 
@@ -396,9 +422,9 @@ module side(logoname)
 			
 			translate([j, 0, 0]) scale([-1, 1, 1]) side_half();
 			
-			translate([card_y/6+printing_tolerance, ch-rad, 0])
+			translate([cavity[y]/6+printing_tolerance, ch-rad, 0])
 			rotate(a=[0, -90, 0])
-			hinge(hingeRad, hingeHole, card_y/3-printing_tolerance*2);
+			hinge(hingeRad, hingeHole, cavity[y]/3-printing_tolerance*2);
 		}
 		
 		translate([0, (ch-rad)/2, wall/2])
@@ -441,6 +467,95 @@ module top_side()
 	top_side_half();
 	scale([-1, 1, 1])
 		top_side_half();
+}
+
+
+module tray_tub()
+{
+	traysize = [cavity[x]-printing_tolerance*4, tray_y, tray_z];
+	
+	translate([-traysize[x]*0.5, 0, 0])
+	difference()
+	{
+		hull()
+		{
+			translate([wall/2, wall/2, 0]) cylinder(r=wall/2, h=traysize[z], $fn=circle_resolution);
+			translate([wall/2, traysize[y]-wall/2, 0]) cylinder(r=wall/2, h=traysize[z], $fn=circle_resolution);
+			translate([traysize[x]-wall/2, wall/2, 0]) cylinder(r=wall/2, h=traysize[z], $fn=circle_resolution);
+			translate([traysize[x]-wall/2, traysize[y]-wall/2, 0]) cylinder(r=wall/2, h=traysize[z], $fn=circle_resolution);
+		}
+		
+		hull()
+		{
+			translate([wall, wall, wall]) translate([wall/2, wall/2, 0]) cylinder(r=wall/2, h=traysize[z], $fn=circle_resolution);
+			translate([wall, -wall, wall]) translate([wall/2, traysize[y]-wall/2, 0]) cylinder(r=wall/2, h=traysize[z], $fn=circle_resolution);
+			translate([-wall, wall, wall]) translate([traysize[x]-wall/2, wall/2, 0]) cylinder(r=wall/2, h=traysize[z], $fn=circle_resolution);
+			translate([-wall, -wall, wall]) translate([traysize[x]-wall/2, traysize[y]-wall/2, 0]) cylinder(r=wall/2, h=traysize[z], $fn=circle_resolution);
+		}
+
+	}
+}
+
+
+module tray_lid()
+{
+	lidsize = [cavity[x]-printing_tolerance*4, tray_y, wall];
+	
+	translate([-lidsize[x]/2, 0, 0])
+	union()
+	{
+		hull()
+		{
+			translate([wall/2, wall/2, 0]) cylinder(r=wall/2, h=lidsize[z], $fn=circle_resolution);
+			translate([wall/2, lidsize[y]-wall/2, 0]) cylinder(r=wall/2, h=lidsize[z], $fn=circle_resolution);
+			translate([lidsize[x]-wall/2, wall/2, 0]) cylinder(r=wall/2, h=lidsize[z], $fn=circle_resolution);
+			translate([lidsize[x]-wall/2, lidsize[y]-wall/2, 0]) cylinder(r=wall/2, h=lidsize[z], $fn=circle_resolution);
+		}
+		hull()
+		{
+			translate([wall+printing_tolerance, wall+printing_tolerance, wall]) translate([wall/2, wall/2, 0]) cylinder(r=wall/2, h=lidsize[z], $fn=circle_resolution);
+			translate([wall+printing_tolerance, -wall-printing_tolerance, wall]) translate([wall/2, lidsize[y]-wall/2, 0]) cylinder(r=wall/2, h=lidsize[z], $fn=circle_resolution);
+			translate([-wall-printing_tolerance, wall+printing_tolerance, wall]) translate([lidsize[x]-wall/2, wall/2, 0]) cylinder(r=wall/2, h=lidsize[z], $fn=circle_resolution);
+			translate([-wall-printing_tolerance, -wall-printing_tolerance, wall]) translate([lidsize[x]-wall/2, lidsize[y]-wall/2, 0]) cylinder(r=wall/2, h=lidsize[z], $fn=circle_resolution);
+		}	}
+}
+
+
+module tray_stand()
+{
+	standsize = [cavity[x]-printing_tolerance*4, tray_y, cavity[z]-tray_z-wall];
+	tray_mount_hole = 2;
+
+	translate([-standsize[x]*0.5, 0, 0])
+	difference()
+	{
+		hull()
+		{
+			translate([wall/2, wall/2, 0]) cylinder(r=wall/2, h=standsize[z], $fn=circle_resolution);
+			translate([wall/2, standsize[y]-wall/2, 0]) cylinder(r=wall/2, h=standsize[z], $fn=circle_resolution);
+			translate([standsize[x]-wall/2, wall/2, 0]) cylinder(r=wall/2, h=standsize[z], $fn=circle_resolution);
+			translate([standsize[x]-wall/2, standsize[y]-wall/2, 0]) cylinder(r=wall/2, h=standsize[z], $fn=circle_resolution);
+		}
+		translate([wall, wall, wall]) cube(standsize-[wall, wall, 0]*2);
+
+		// Hollowness
+		translate([standsize[x]/2, -j, standsize[z]])
+		scale([standsize[x]/2-wall*2, 1, standsize[z]-wall*2])
+		rotate([-90,0,0])
+		cylinder(r=1, h=standsize[y]+j*2, $fn=circle_resolution);
+
+		translate([-j, standsize[y]/2, standsize[z]])
+		scale([1, standsize[y]/2-wall*2, standsize[z]-wall*2])
+		rotate([0,90,0])
+		cylinder(r=1, h=standsize[x]+j*2, $fn=circle_resolution);
+	}
+
+	// Tray mounting holes
+	translate([standsize[x]/2-tray_mount_hole-1, tray_mount_hole+1, 0]) cylinder(r=tray_mount_hole-printing_tolerance, h=standsize[z]+wall, $fn=circle_resolution);
+	translate([-standsize[x]/2+tray_mount_hole+1, tray_mount_hole+1, 0]) cylinder(r=tray_mount_hole-printing_tolerance, h=standsize[z]+wall, $fn=circle_resolution);
+	translate([standsize[x]/2-tray_mount_hole-1, standsize[y]-tray_mount_hole-1, 0]) cylinder(r=tray_mount_hole-printing_tolerance, h=standsize[z]+wall, $fn=circle_resolution);
+	translate([-standsize[x]/2+tray_mount_hole+1, standsize[y]-tray_mount_hole-1, 0]) cylinder(r=tray_mount_hole-printing_tolerance, h=standsize[z]+wall, $fn=circle_resolution);
+
 }
 
 
@@ -600,20 +715,29 @@ if(part==11)
 }
 if(part==12)
 {
-	translate([0, -(card_y+(wall+mechanism-printing_tolerance))/2, 0])
+	translate([0, -(cavity[y]+(wall+mechanism-printing_tolerance))/2, 0])
 	rack_lift_platform();
 }
 if(part==13)
 {
-	translate([0, -oy, 0])
-	base();
+	translate([0, -tray_y/2, 0])
+	{
+		tray_lid();
+		translate([0, -tray_y-wall, 0]) tray_stand();
+		translate([0, tray_y+wall, 0]) tray_tub();
+	}
 }
-if(part==14) // PLATE-A is just the base
+if(part==14)
 {
 	translate([0, -oy, 0])
 	base();
 }
-if(part==15) // PLATE-B is the four corners and their joiners
+if(part==15) // PLATE-A is just the base
+{
+	translate([0, -oy, 0])
+	base();
+}
+if(part==16) // PLATE-B is the four corners and their joiners
 {
 	translate([0, (rad*2+card_clearance+wall)+printingGap/2, 0]) rotate([0, 0, 180])
 	{
@@ -635,137 +759,186 @@ if(part==15) // PLATE-B is the four corners and their joiners
 	rotate([0, 0, 90])
 	lid_connector();
 }
-if(part==16) // PLATE-C is the two outer cutout panels and rack lifts
+if(part==17) // PLATE-C is the two outer cutout panels and rack lifts
 {
 	translate([0, wall/2, 0]) frontAndBack(front_logo);
 	rotate([0, 0, 180]) translate([0, wall/2, 0]) frontAndBack(back_logo);
 	translate([ox+12+wall, -50, 0]) rack_lift();
 	translate([-(ox+12+wall), -50, 0]) rack_lift();
 }
-if(part==17) // PLATE-D is the lower hinge panels
+if(part==18) // PLATE-D is the lower hinge panels
 {
 	translate([0, wall/2, 0]) side(left_logo);
 	rotate([0, 0, 180]) translate([0, wall/2, 0]) side(right_logo);
 }
-if(part==18) // PLATE-E is the large mechanism-holding plates
+if(part==19) // PLATE-E is the large mechanism-holding plates
 {
 	translate([ox+wall/2, -ch/2, 0]) mechanism();
 	translate([-ox-wall/2, -ch/2, 0]) mechanism();
 }
-if(part==19) // PLATE-F is the upper hinged panels
+if(part==20) // PLATE-F is the upper hinged panels
 {
 	translate([0, -(rad*2-4*hingeRad+card_clearance+wall)-hingeRad*4-wall/2, 0]) top_side();
 	translate([0, (rad*2-4*hingeRad+card_clearance+wall)+hingeRad*4+wall/2, 0]) rotate([0, 0, 180]) top_side();
-	translate([-(card_y/2+printingGap), 0, 0]) rotate([0, 0, 90]) lid();
-	translate([card_y/2+printingGap, 0, 0]) rotate([0, 0, -90]) lid();
+	translate([-(cavity[y]/2+printingGap), 0, 0]) rotate([0, 0, 90]) lid();
+	translate([cavity[y]/2+printingGap, 0, 0]) rotate([0, 0, -90]) lid();
 }
-if(part==20) // PLATE-G is the lift platform
+if(part==21) // PLATE-G is the lift platform
 {
-	translate([0, -(card_y+(wall+mechanism-printing_tolerance)*2)/2, 0]) rack_lift_platform();
+	translate([0, -(cavity[y]+(wall+mechanism-printing_tolerance)*2)/2, 0]) rack_lift_platform();
 }
 
 
 module assembledLayout()
 {
-	// front and back
-	translate([0, -oy+wall-explode, 0])
-	rotate(a=[90, 0, 0])
+	E = (explode / 100);
+	
+	color("PeachPuff")
+	translate([0, -oy, 0])
+	base();
+
+	color("Khaki")
+	translate([0, -80*E, 0])
+	translate([0, -oy+wall-j, 0])
+	rotate([90, 0, 0])
 	frontAndBack(front_logo);
 
-	translate([0, oy-wall+explode, 0])
-	rotate(a=[90, 0, 180])
+	color("Khaki")
+	translate([0, 80*E, 0])
+	translate([0, oy-wall+j, 0])
+	rotate([90, 0, 180])
 	frontAndBack(back_logo);
 
-	// mechanisms
-	color("RosyBrown")
-	translate([0, -card_y/2, 0])
-	rotate(a=[90, 0, 0])
-	mechanism();
-
-	color("RosyBrown")
-	translate([0, card_y/2, 0])
-	rotate(a=[90, 0, 180])
-	mechanism();
-
-	// sides (exploded)
 	color("blue")
-	translate([ox - wall + explode, 0, 0])
-	rotate(a=[90, 0, 90])
+	translate([80*E, 0, 0])
+	translate([ox - wall+j , 0, 0])
+	rotate([90, 0, 90])
 	side(right_logo);
 
-	color("blue")
-	translate([-ox + wall -explode, 0, 0])
-	rotate(a=[90, 0, -90])
-	side(left_logo);
+	// color("blue")
+	// translate([-80*E, 0, 0])
+	// translate([-ox + wall-j, 0, 0])
+	// rotate([90, 0, -90])
+	// side(left_logo);
 
-	// rack  / pinion card lift (slides)
-	// mechanisms
+	color("RosyBrown")
+	translate([0, -50*E, wall*5*E])
+	translate([0, -cavity[y]/2, j+j])
+	rotate(a=[90, 0, 0])
+	mechanism();
+
+	color("RosyBrown")
+	translate([0, 50*E, wall*5*E])
+	translate([0, cavity[y]/2, j+j])
+	rotate(a=[90, 0, 180])
+	mechanism();
+
 	color("SeaGreen")
-	translate([0, -card_y/2-wall-mechanism-explode/2, 0])
+	translate([0, -30*E, wall*5*E])
+	translate([0, -cavity[y]/2-wall-mechanism, wall])
 	rotate(a=[90, 0, 180])
 	rack_lift();
 
 	color("SeaGreen")
-	translate([0, card_y/2+wall+mechanism+explode/2, 0])
+	translate([0, 30*E, wall*5*E])
+	translate([0, cavity[y]/2+wall+mechanism, wall])
 	rotate(a=[90, 0, 0])
 	rack_lift();
 
-	// top
+	color("Purple")
+	translate([0, 0, 10*E])
+	translate([0, -oy+wall, wall*3])
+	rotate([0, 180, 0])
+	rack_lift_platform();
+
+	if(tray_y > 0)
+	{
+		translate([0, -oy+wall+mechanism+printing_tolerance*3+wall, wall-j+wall*2])
+		union()
+		{
+			color("DarkGray")
+			translate([0, 0, 20*E])
+			translate([0, tray_y, cavity[z]-tray_z-wall])
+			rotate([180, 0, 0])
+			tray_stand();
+
+			color("DimGray")
+			translate([0, 0, 30*E])
+			translate([0, 0, cavity[z]-tray_z-wall])
+			rotate([0, 0, 0])
+			tray_tub();
+			
+			color("DarkGray")
+			translate([0, 0, 40*E])
+			translate([0, 0, cavity[z]])
+			rotate([0, 180, 0])
+			tray_lid();
+		}
+	}
+
 	color("DarkMagenta")
-	translate([0+explode, -oy-explode, ch-rad+explode])
-	rotate(a=[90, 0, 180])
+	translate([10*E, -10*E, 0])
+	translate([-j*2, -oy-j*2, ch-rad])
+	rotate([90, 0, 180])
 	scale([-1, 1, 1])
 	top_half();
 
 	color("DarkMagenta")
-	translate([0-explode, -oy-explode, ch-rad+explode])
+	translate([-10*E, -10*E, 0])
+	translate([j*2, -oy, ch-rad])
 	rotate(a=[90, 0, 180])
 	top_half();
 
 	color("DarkMagenta")
-	translate([0-explode, oy+explode, ch-rad+explode])
+	translate([-10*E, 10*E, 0])
+	translate([j*2, oy, ch-rad])
 	rotate(a=[90, 0, 0])
 	scale([-1, 1, 1])
 	top_half();
 
 	color("DarkMagenta")
-	translate([0+explode, oy+explode, ch-rad+explode])
+	translate([10*E, 10*E, 0])
+	translate([-j*2, oy, ch-rad])
 	rotate(a=[90, 0, 0])
 	top_half();
 
-	// top
-	// bug - height isn't supposed to include two lots of card_clearance and wall
-	translate([notchHeight+explode, 0, oz+card_clearance+wall+explode])
+	color("Sienna")
+	translate([40*E, 0, 30*E])
+	translate([notchHeight, 0, oz+card_clearance+wall])
 	rotate(a=[0, 180, -90])
 	lid();
-	
-	translate([-j-explode*0.5, -oy, oz+card_clearance+explode])
-	rotate([180, 0, -90])
-	lid_connector();
-	
-	translate([-notchHeight-explode, 0, oz+card_clearance+wall+explode])
-	rotate(a=[0, 180, 90])
-	lid();
 
+	// color("Sienna")
+	// translate([-40*E, 0, 30*E])
+	// translate([-notchHeight, 0, oz+card_clearance+wall])
+	// rotate(a=[0, 180, 90])
+	// lid();
+
+	// color("Chocolate")
+	// translate([-10*E, 0, 30*E])
+	// translate([-j, -oy, oz+card_clearance])
+	// rotate([180, 0, -90])
+	// lid_connector();
+
+	color("Chocolate")
 	rotate([0, 0, 180])
-	translate([-j-explode*0.5, -oy, oz+card_clearance+explode])
+	translate([-10*E, 0, 30*E])
+	translate([-j, -oy, oz+card_clearance])
 	rotate([180,0,-90])
 	lid_connector();
-
-	// top side
-	translate([-ox-hingeRad*2+wall-explode, 0, oz+card_clearance+wall+explode/2])
-	rotate(a=[90, 180, 90])
-	top_side();
-
-	translate([ox+hingeRad*2-wall+explode, 0, oz+card_clearance+wall+explode/2])
+	
+	// color("Green")
+	// translate([-50*E, 0, 0])
+	// translate([-ox-hingeRad*2+wall, 0, oz+card_clearance+wall])
+	// rotate(a=[90, 180, 90])
+	// top_side();
+	
+	color("Green")
+	translate([50*E, 0, 0])
+	translate([ox+hingeRad*2-wall, 0, oz+card_clearance+wall])
 	rotate(a=[90, 180, -90])
 	top_side();
 
-	translate([0, -oy, -explode])
-	base();
-	
-	translate([0, -oy, -explode*0.5])
-	rack_lift_platform();
 }
 
 %build_plate(build_plate_selector, build_plate_manual_x, build_plate_manual_y);

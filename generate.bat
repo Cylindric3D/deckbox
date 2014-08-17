@@ -11,28 +11,29 @@ SET SLICER=slic3r-console
 
 
 :: Screenshots for documentation
-%OPENSCAD% -D part=14 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,800 --imgsize=500,300 --render -o img\plate-A-base.png deck_box.scad
-%OPENSCAD% -D part=15 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,800 --imgsize=500,300 --render -o img\plate-B-top.png deck_box.scad
-%OPENSCAD% -D part=16 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,800 --imgsize=500,300 --render -o img\plate-C-panels-racks.png deck_box.scad
-%OPENSCAD% -D part=17 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,800 --imgsize=500,300 --render -o img\plate-D-lowerhinges.png deck_box.scad
-%OPENSCAD% -D part=18 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,900 --imgsize=500,300 --render -o img\plate-E-mechanism.png deck_box.scad
-%OPENSCAD% -D part=19 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,800 --imgsize=500,300 --render -o img\plate-F-upperhinges.png deck_box.scad
-%OPENSCAD% -D part=20 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,800 --imgsize=500,300 --render -o img\plate-G-platform.png deck_box.scad
+%OPENSCAD% -D part=15 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,200 --imgsize=500,300 --render -o img\plate-A-base.png deck_box.scad
+%OPENSCAD% -D part=16 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,200 --imgsize=500,300 --render -o img\plate-B-top.png deck_box.scad
+%OPENSCAD% -D part=17 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,200 --imgsize=500,300 --render -o img\plate-C-panels-racks.png deck_box.scad
+%OPENSCAD% -D part=18 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,200 --imgsize=500,300 --render -o img\plate-D-lowerhinges.png deck_box.scad
+%OPENSCAD% -D part=19 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,200 --imgsize=500,300 --render -o img\plate-E-mechanism.png deck_box.scad
+%OPENSCAD% -D part=20 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,200 --imgsize=500,300 --render -o img\plate-F-upperhinges.png deck_box.scad
+%OPENSCAD% -D part=21 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,200 --imgsize=500,300 --render -o img\plate-G-platform.png deck_box.scad
 
 :: Screenshots for individual items
-%OPENSCAD% -D part=1  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-front-1x.png deck_box.scad
-%OPENSCAD% -D part=2  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-back-1x.png deck_box.scad
-%OPENSCAD% -D part=3  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-left-1x.png deck_box.scad
-%OPENSCAD% -D part=4  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-right-1x.png deck_box.scad
-%OPENSCAD% -D part=5  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-racklift-2x.png deck_box.scad
-%OPENSCAD% -D part=6  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-corner_left-2x.png deck_box.scad
-%OPENSCAD% -D part=7  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-corner_right-2x.png deck_box.scad
-%OPENSCAD% -D part=8  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-topjoin-2x.png deck_box.scad
-%OPENSCAD% -D part=9  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-mechanism-2x.png deck_box.scad
-%OPENSCAD% -D part=10 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-lid-2x.png deck_box.scad
-%OPENSCAD% -D part=11 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-topside-2x.png deck_box.scad
-%OPENSCAD% -D part=12 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-rackliftplatform-1x.png deck_box.scad
-%OPENSCAD% -D part=13 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,500 --imgsize=500,300 --render -o img\part-base-1x.png deck_box.scad
+%OPENSCAD% -D part=1  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-front-1x.png deck_box.scad
+%OPENSCAD% -D part=2  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-back-1x.png deck_box.scad
+%OPENSCAD% -D part=3  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-left-1x.png deck_box.scad
+%OPENSCAD% -D part=4  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-right-1x.png deck_box.scad
+%OPENSCAD% -D part=5  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-racklift-2x.png deck_box.scad
+%OPENSCAD% -D part=6  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,100 --imgsize=500,300 --render -o img\part-corner_left-2x.png deck_box.scad
+%OPENSCAD% -D part=7  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,100 --imgsize=500,300 --render -o img\part-corner_right-2x.png deck_box.scad
+%OPENSCAD% -D part=8  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-topjoin-2x.png deck_box.scad
+%OPENSCAD% -D part=9  -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-mechanism-2x.png deck_box.scad
+%OPENSCAD% -D part=10 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-lid-2x.png deck_box.scad
+%OPENSCAD% -D part=11 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-topside-2x.png deck_box.scad
+%OPENSCAD% -D part=12 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-rackliftplatform-1x.png deck_box.scad
+%OPENSCAD% -D part=13 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,250 --imgsize=500,300 --render -o img\part-tray-1x.png deck_box.scad
+%OPENSCAD% -D part=14 -D circleRes=120 -D j=0.1 --camera=0,0,0,55,0,330,150 --imgsize=500,300 --render -o img\part-base-1x.png deck_box.scad
 
 :: STLs of individual parts
 %OPENSCAD% -D part=1  -D circleRes=120 -D j=0.1 -o stl\part-front-1x.stl deck_box.scad
@@ -47,20 +48,21 @@ SET SLICER=slic3r-console
 %OPENSCAD% -D part=10 -D circleRes=120 -D j=0.1 -o stl\part-lid-2x.stl deck_box.scad
 %OPENSCAD% -D part=11 -D circleRes=120 -D j=0.1 -o stl\part-topside-2x.stl deck_box.scad
 %OPENSCAD% -D part=12 -D circleRes=120 -D j=0.1 -o stl\part-rackliftplatform-1x.stl deck_box.scad
-%OPENSCAD% -D part=13 -D circleRes=120 -D j=0.1 -o stl\part-base-1x.stl deck_box.scad
+%OPENSCAD% -D part=13 -D circleRes=120 -D j=0.1 -o stl\part-tray-1x.stl deck_box.scad
+%OPENSCAD% -D part=14 -D circleRes=120 -D j=0.1 -o stl\part-base-1x.stl deck_box.scad
 
 :: STLs of full plates
-%OPENSCAD% -D part=14 -D circleRes=120 -D j=0.1 -o stl\plate-A-base.stl deck_box.scad
-%OPENSCAD% -D part=15 -D circleRes=120 -D j=0.1 -o stl\plate-B-top.stl deck_box.scad
-%OPENSCAD% -D part=16 -D circleRes=120 -D j=0.1 -o stl\plate-C-panels-racks.stl deck_box.scad
-%OPENSCAD% -D part=17 -D circleRes=120 -D j=0.1 -o stl\plate-D-lowerhinges.stl deck_box.scad
-%OPENSCAD% -D part=18 -D circleRes=120 -D j=0.1 -o stl\plate-E-mechanism.stl deck_box.scad
-%OPENSCAD% -D part=19 -D circleRes=120 -D j=0.1 -o stl\plate-F-upperhinges.stl deck_box.scad
-%OPENSCAD% -D part=20 -D circleRes=120 -D j=0.1 -o stl\plate-G-platform.stl deck_box.scad
+%OPENSCAD% -D part=15 -D circleRes=120 -D j=0.1 -o stl\plate-A-base.stl deck_box.scad
+%OPENSCAD% -D part=16 -D circleRes=120 -D j=0.1 -o stl\plate-B-top.stl deck_box.scad
+%OPENSCAD% -D part=17 -D circleRes=120 -D j=0.1 -o stl\plate-C-panels-racks.stl deck_box.scad
+%OPENSCAD% -D part=18 -D circleRes=120 -D j=0.1 -o stl\plate-D-lowerhinges.stl deck_box.scad
+%OPENSCAD% -D part=19 -D circleRes=120 -D j=0.1 -o stl\plate-E-mechanism.stl deck_box.scad
+%OPENSCAD% -D part=20 -D circleRes=120 -D j=0.1 -o stl\plate-F-upperhinges.stl deck_box.scad
+%OPENSCAD% -D part=21 -D circleRes=120 -D j=0.1 -o stl\plate-G-platform.stl deck_box.scad
 
 :: STLs of logo parts for demo
-%OPENSCAD% -D part=16 -D circleRes=120 -D j=0.1 -D front_logo=\"manawhite\" -D back_logo=\"manared\" -o stl\logo_sample-1.stl deck_box.scad
-%OPENSCAD% -D part=17 -D circleRes=120 -D j=0.1 -D left_logo=\"manablue\" -D right_logo=\"manablack\" -o stl\logo_sample-2.stl deck_box.scad
+%OPENSCAD% -D part=17 -D circleRes=120 -D j=0.1 -D front_logo=\"manawhite\" -D back_logo=\"manared\" -o stl\logo_sample-1.stl deck_box.scad
+%OPENSCAD% -D part=188 -D circleRes=120 -D j=0.1 -D left_logo=\"manablue\" -D right_logo=\"manablack\" -o stl\logo_sample-2.stl deck_box.scad
 
 :: Slice plated layouts
 %SLICER% -load slic3r.ini --output gcode\plate-A-base.gcode stl\plate-A-base.stl
@@ -83,4 +85,5 @@ SET SLICER=slic3r-console
 %SLICER% -load slic3r.ini --output gcode\part-lid-2x.gcode stl\part-lid-2x.stl
 %SLICER% -load slic3r.ini --output gcode\part-topside-2x.gcode stl\part-topside-2x.stl
 %SLICER% -load slic3r.ini --output gcode\part-rackliftplatform-1x.gcode stl\part-rackliftplatform-1x.stl
+%SLICER% -load slic3r.ini --output gcode\part-tray-1x.gcode stl\part-tray-1x.stl
 %SLICER% -load slic3r.ini --output gcode\part-base-1x.gcode stl\part-base-1x.stl
